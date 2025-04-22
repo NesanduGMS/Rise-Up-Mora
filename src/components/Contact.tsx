@@ -14,7 +14,11 @@ const COLORS = {
 };
 
 // Particle component for background animation
-const Particle = memo(({ index }) => {
+interface ParticleProps {
+  index: number;
+}
+
+const Particle = memo(({ index }: ParticleProps) => {
   const size = Math.floor(Math.random() * 6) + 3;
   const initialPosition = {
     x: Math.random() * 100,
@@ -41,7 +45,15 @@ const Particle = memo(({ index }) => {
 });
 
 // Enhanced animated input with icon support
-const AnimatedInput = memo(({ label, icon, type = "text", placeholder, className = "" }) => {
+interface AnimatedInputProps {
+  label: string;
+  icon?: JSX.Element;
+  type?: string;
+  placeholder?: string;
+  className?: string;
+}
+
+const AnimatedInput = memo(({ label, icon, type = "text", placeholder, className = "" }: AnimatedInputProps) => {
   const [inputState, setInputState] = useState({ focused: false, hasValue: false });
   
   const handleFocus = useCallback(() => 
@@ -106,7 +118,21 @@ const AnimatedInput = memo(({ label, icon, type = "text", placeholder, className
 });
 
 // Enhanced contact card with hover effects and animations
-const ContactCard = memo(({ name, role, organization, email, phone, social, index }) => {
+interface ContactCardProps {
+  name: string;
+  role: string;
+  organization?: string;
+  email: string;
+  phone: string;
+  social?: {
+    website?: string;
+    linkedin?: string;
+    twitter?: string;
+  };
+  index: number;
+}
+
+const ContactCard = memo(({ name, role, organization, email, phone, social, index }: ContactCardProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isInView, setIsInView] = useState(false);
   
@@ -559,7 +585,7 @@ const EnhancedContact = () => {
   };
 
   // Create background particles
-  const particles = Array(15).fill().map((_, i) => <Particle key={i} index={i} />);
+  const particles = Array(15).fill(null).map((_, i) => <Particle key={i} index={i} />);
 
   return (
     <section 
