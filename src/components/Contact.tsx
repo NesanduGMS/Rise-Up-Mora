@@ -1,4 +1,3 @@
-import React from 'react';
 import { Mail, Phone, User } from 'lucide-react';
 
 const ContactCard = ({ name, role, organization, email, phone }: {

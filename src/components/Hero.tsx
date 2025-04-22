@@ -1,5 +1,3 @@
-import React from 'react';
-
 const Hero = () => {
   return (
     <div id="home" className="pt-16 bg-gradient-to-r from-blue-50 to-indigo-50">
