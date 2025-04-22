@@ -1,5 +1,6 @@
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
+import About from './components/About'
 import Timeline from './components/Timeline';
 import Partners from './components/Partners';
 import Contact from './components/Contact';
@@ -10,6 +11,7 @@ function App() {
     <div className="min-h-screen bg-gray-50">
       <Navbar />
       <Hero />
+      <About />
       <Timeline />
       <Partners />
       <Contact />

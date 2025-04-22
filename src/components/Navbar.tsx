@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Menu, X, ChevronDown } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import logo from '../assets/logo.webp';
 
 const Navbar = () => {
@@ -35,7 +35,7 @@ const Navbar = () => {
   }, []);
 
   // Smooth scroll function
-  const scrollToSection = (sectionId) => {
+  const scrollToSection = (sectionId: string) => {
     const section = document.getElementById(sectionId);
     if (section) {
       window.scrollTo({
@@ -139,7 +139,7 @@ const Navbar = () => {
       </div>
 
       {/* Add custom CSS */}
-      <style jsx>{`
+      <style>{`
         .bg-dark-blue {
           background-color: #112735;
         }
