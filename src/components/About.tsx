@@ -75,7 +75,7 @@ const AboutSection: React.FC = () => {
         </div>
       </div>
       
-      <style jsx>{`
+      <style>{`
         .about-section {
           padding: 120px 0;
           background: linear-gradient(180deg, #0f2130 0%, #112735 100%);
