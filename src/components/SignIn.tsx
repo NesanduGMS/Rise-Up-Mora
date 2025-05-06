@@ -29,14 +29,14 @@ const SignIn = () => {
       colors={['#0f2130', '#1a3954', '#f1c232', 'rgba(241, 194, 50, 0.5)']}
       backgroundFill="#071016"
       blur={10}
-      speed="slow"
+      speed="fast"
       waveWidth={100}
       containerClassName="h-screen w-full"
       waveOpacity={0.3}
     >
       <div className="sign-in-container">
         <div className="back-to-home-link">
-          <Link to="/" className="flex -center gap-2 text-white hover:text-gold transition-colors">
+          <Link to="/" className="flex items-center gap-2 text-white hover:text-gold transition-colors">
             <ArrowLeft size={16} />
             <span>Back to Home</span>
           </Link>
@@ -172,7 +172,7 @@ const SignIn = () => {
           .sign-in-card {
             display: flex;
             width: 100%;
-            max-width: 900px;
+            max-width: 1000px; /* Increased width from 900px to 1000px */
             min-height: 500px;
             border-radius: 20px;
             position: relative;
@@ -181,6 +181,27 @@ const SignIn = () => {
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
             border: 1px solid rgba(255, 255, 255, 0.18);
             z-index: 1;
+            animation: borderGlow 6s ease-in-out infinite;
+          }
+          
+          /* Glimmering gradient border animation */
+          @keyframes borderGlow {
+            0% {
+              box-shadow: 0 0 15px 2px rgba(241, 194, 50, 0.5), 0 0 20px 5px rgba(29, 78, 216, 0.3), 0 0 0 0 rgba(255, 255, 255, 0);
+              border: 1px solid rgba(241, 194, 50, 0.6);
+            }
+            33% {
+              box-shadow: 0 0 15px 2px rgba(56, 189, 248, 0.5), 0 0 20px 5px rgba(241, 194, 50, 0.3), 0 0 0 0 rgba(255, 255, 255, 0);
+              border: 1px solid rgba(56, 189, 248, 0.6);
+            }
+            66% {
+              box-shadow: 0 0 15px 2px rgba(192, 132, 252, 0.5), 0 0 20px 5px rgba(56, 189, 248, 0.3), 0 0 0 0 rgba(255, 255, 255, 0);
+              border: 1px solid rgba(192, 132, 252, 0.6);
+            }
+            100% {
+              box-shadow: 0 0 15px 2px rgba(241, 194, 50, 0.5), 0 0 20px 5px rgba(29, 78, 216, 0.3), 0 0 0 0 rgba(255, 255, 255, 0);
+              border: 1px solid rgba(241, 194, 50, 0.6);
+            }
           }
           
           .glass-effect {
@@ -193,7 +214,7 @@ const SignIn = () => {
           
           /* Brand Panel Styles */
           .brand-panel {
-            flex: 0 0 40%;
+            flex: 0 0 38%; /* Slightly reduced from 40% to balance the wider card */
             background-color: rgba(17, 39, 53, 0.5);
             color: white;
             display: flex;
@@ -347,6 +368,10 @@ const SignIn = () => {
             flex-direction: column;
             gap: 1.5rem;
             margin-bottom: 2rem;
+            width: 100%; /* Ensures the form uses the full width of its container */
+            max-width: 480px; /* Set maximum width for the form elements */
+            margin-left: auto;
+            margin-right: auto;
           }
           
           .form-group {
@@ -584,11 +609,31 @@ const SignIn = () => {
             }
           }
           
-          /* Responsive styles */
+          /* Enhanced Responsive styles */
+          @media (max-width: 1024px) {
+            .sign-in-card {
+              max-width: 900px;
+            }
+          }
+          
+          @media (max-width: 900px) {
+            .sign-in-card {
+              max-width: 90%;
+            }
+            
+            .form-panel {
+              padding: 2.5rem;
+            }
+            
+            .sign-in-form {
+              max-width: 100%;
+            }
+          }
+          
           @media (max-width: 768px) {
             .sign-in-card {
               flex-direction: column;
-              max-width: 480px;
+              max-width: 90%;
             }
             
             .brand-panel {
@@ -620,6 +665,64 @@ const SignIn = () => {
             
             .form-title {
               margin-bottom: 1.5rem;
+            }
+            
+            .sign-in-container {
+              padding: 1.5rem;
+            }
+            
+            .back-to-home-link {
+              top: 15px;
+              left: 15px;
+            }
+          }
+          
+          @media (max-width: 480px) {
+            .sign-in-card {
+              max-width: 100%;
+              margin: 0;
+              border-radius: 15px;
+            }
+            
+            .sign-in-container {
+              padding: 1rem;
+            }
+            
+            .form-panel {
+              padding: 1.5rem 1rem;
+            }
+            
+            .back-to-home-link {
+              padding: 6px 12px;
+              top: 10px;
+              left: 10px;
+              font-size: 14px;
+            }
+            
+            .form-group {
+              margin-bottom: 0.75rem;
+            }
+            
+            .form-input {
+              padding: 12px;
+            }
+            
+            .form-title {
+              font-size: 22px;
+            }
+            
+            .logo-container {
+              width: 70px;
+              height: 70px;
+            }
+            
+            .logo {
+              width: 50px;
+              height: 50px;
+            }
+            
+            .brand-name {
+              font-size: 22px;
             }
           }
         `}</style>
