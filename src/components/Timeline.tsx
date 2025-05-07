@@ -1,16 +1,20 @@
-import { useEffect, useRef } from 'react';
-import { Calendar, ChevronRight } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { Calendar, Check } from 'lucide-react';
 
-interface TimelineEventProps {
+interface TimelineEventProps {                                              
   date: string;
   title: string;
   description: string;
   index: number;
+  isCompleted: boolean;
+  isActive: boolean;
 }
 
-const TimelineEvent = ({ date, title, description, index }: TimelineEventProps) => {
+const TimelineEvent = ({ date, title, description, index, isCompleted, isActive }: TimelineEventProps) => {
   const eventRef = useRef<HTMLDivElement>(null);
-
+  const dotRef = useRef<HTMLDivElement>(null);
+  const [showCheck, setShowCheck] = useState(isCompleted);
+  
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -33,30 +37,65 @@ const TimelineEvent = ({ date, title, description, index }: TimelineEventProps) 
     };
   }, []);
 
+  // Effect to handle icon transition when progress indicator reaches the event
+  useEffect(() => {
+    // Only trigger animation if event is active (progress indicator is at this point)
+    // and it's supposed to be completed but check icon isn't shown yet
+    if (isActive && isCompleted && !showCheck) {
+      if (dotRef.current) {
+        // Start the icon transition animation
+        dotRef.current.classList.add('icon-transition');
+      }
+      
+      // Wait for the animation to complete before showing the check icon
+      const timer = setTimeout(() => {
+        setShowCheck(true);
+        if (dotRef.current) {
+          dotRef.current.classList.add('completed');
+          dotRef.current.classList.remove('icon-transition');
+        }
+      }, 300);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [isActive, isCompleted, showCheck]);
+
   return (
     <div 
       ref={eventRef}
       className={`timeline-event opacity-0 translate-y-8 ${index % 2 === 0 ? 'timeline-left' : 'timeline-right'}`}
       style={{ transitionDelay: `${index * 0.2}s` }}
+      data-index={index}
     >
       <div className="timeline-connector">
-        <div className="timeline-dot">
-          <Calendar size={20} className="timeline-icon" />
+        <div 
+          ref={dotRef}
+          className={`timeline-dot ${showCheck ? 'completed' : ''}`}
+        >
+          {showCheck ? 
+            <Check size={20} className="timeline-icon" /> : 
+            <Calendar size={20} className="timeline-icon" />
+          }
         </div>
       </div>
-      <div className="timeline-card">
+      <div className={`timeline-card ${showCheck ? 'completed' : ''}`}>
         <div className="timeline-date">{date}</div>
         <h3 className="timeline-title">{title}</h3>
         <p className="timeline-description">{description}</p>
-        <button className="timeline-button">
-          Learn more <ChevronRight size={16} />
-        </button>
       </div>
     </div>
   );
 };
 
 const Timeline = () => {
+  const timelineRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const progressIndicatorRef = useRef<HTMLDivElement>(null);
+  const [completedEvents, setCompletedEvents] = useState<number>(0);
+  const [activeEventIndex, setActiveEventIndex] = useState<number>(-1);
+  const [isVisible, setIsVisible] = useState<boolean>(false);
+  const [progress, setProgress] = useState<number>(0);
+  
   const events = [
     {
       date: "August 27th, 2024",
@@ -90,6 +129,122 @@ const Timeline = () => {
     }
   ];
 
+  useEffect(() => {
+    setCompletedEvents(2);  // should realtime update
+  }, []);
+  
+  useEffect(() => {
+    const checkVisibility = () => {
+      if (!timelineRef.current) return;
+      
+      const rect = timelineRef.current.getBoundingClientRect();
+      const triggerPoint = window.innerHeight * 0.8;
+       
+      const isInViewport = rect.top < triggerPoint;
+      
+      if (isInViewport && !isVisible) {
+        setIsVisible(true);
+        
+        if (progressIndicatorRef.current) {
+          progressIndicatorRef.current.style.top = '0%';
+          
+          setTimeout(() => {
+            if (completedEvents > 0 && events.length > 0) {
+              const eventPositionPercentage = (completedEvents - 0.5) / events.length * 100;
+              progressIndicatorRef.current.style.setProperty('--completed-percent', (eventPositionPercentage / 100).toString());
+            } else {
+              progressIndicatorRef.current.style.setProperty('--completed-percent', '0');
+            }
+            progressIndicatorRef.current.classList.add('animate-slide-down');
+          }, 300);
+        }
+      } else if (!isInViewport && isVisible) {
+        setIsVisible(false);
+        if (progressIndicatorRef.current) {
+          progressIndicatorRef.current.classList.remove('animate-slide-down');
+        }
+      }
+    };
+    
+    
+    checkVisibility();
+    
+    window.addEventListener('scroll', checkVisibility);
+    return () => window.removeEventListener('scroll', checkVisibility);
+  }, [isVisible, completedEvents, events.length]);
+
+  useEffect(() => {
+    const updateProgressIndicator = () => {
+      if (!timelineRef.current || !progressIndicatorRef.current || !trackRef.current) return;
+      
+      const timelineRect = timelineRef.current.getBoundingClientRect();
+      const trackRect = trackRef.current.getBoundingClientRect();
+      
+      if (timelineRect.top > window.innerHeight) {
+        setProgress(0);
+        setActiveEventIndex(-1);
+        return;
+      }
+      
+      if (timelineRect.bottom < 0) {
+        const lastCompletedPosition = completedEvents > 0 ? 
+          (completedEvents - 0.5) / events.length : 0;
+        setProgress(lastCompletedPosition);
+        return;
+      }
+      
+      const timelineHeight = timelineRect.height;
+      const scrollPosition = window.innerHeight - timelineRect.top;
+      const scrollPercentage = Math.min(scrollPosition / (timelineHeight + window.innerHeight), 1);
+      
+      const eventsTotal = events.length;
+      const eventHeight = 1 / eventsTotal;
+      
+      // Calculate where the progress indicator should stop (based on completed events)
+      const maxCompletePosition = completedEvents > 0 ? 
+        (completedEvents - 0.5) / eventsTotal : 0;
+      
+      // Calculate the current position based on scroll
+      const currentEventIndex = Math.floor(scrollPercentage * eventsTotal);
+      const currentPosition = currentEventIndex > 0 ? 
+        (currentEventIndex - 0.5) / eventsTotal : 0;
+      
+      // Use the lower of the two values to prevent scrolling past completed events
+      const finalProgress = Math.min(maxCompletePosition, currentPosition);
+      
+      // Update the progress state
+      setProgress(finalProgress);
+      
+      // Set the active event index - THIS IS KEY FOR THE ICON TRANSITIONS
+      // Only trigger icon transitions for events that are both in view AND completed
+      if (currentEventIndex !== activeEventIndex && 
+          currentEventIndex >= 0 && 
+          currentEventIndex < completedEvents) {
+        setActiveEventIndex(currentEventIndex);
+      }
+    };
+    
+    
+    updateProgressIndicator();
+    
+    
+    window.addEventListener('scroll', updateProgressIndicator);
+    return () => window.removeEventListener('scroll', updateProgressIndicator);
+  }, [completedEvents, activeEventIndex, events.length]);
+
+  
+  useEffect(() => {
+    if (progressIndicatorRef.current) {
+      
+      progressIndicatorRef.current.style.top = `${progress * 100}%`;
+    }
+  }, [progress]);
+
+  
+  const isEventCompleted = (index: number) => {
+    return index < completedEvents;
+  };
+
   return (
     <section id="timeline" className="timeline-section">
       <div className="timeline-container">
@@ -101,15 +256,24 @@ const Timeline = () => {
           <div className="heading-underline"></div>
         </div>
         
-        <div className="timeline-wrapper">
-          <div className="timeline-track"></div>
+        <div className="timeline-wrapper" ref={timelineRef}>
+          <div className="timeline-track" ref={trackRef}>
+            <div className="progress-indicator" ref={progressIndicatorRef}>
+              <div className="indicator-circle">
+                <Check size={16} className="indicator-icon" />
+              </div>
+            </div>
+          </div>
+          
           {events.map((event, index) => (
             <TimelineEvent
               key={index}
-              date={`${event.time} - ${event.date}`}
+              date={`${event.date} - ${event.time}`}
               title={event.title}
               description={event.description}
               index={index}
+              isCompleted={isEventCompleted(index)}
+              isActive={activeEventIndex === index}
             />
           ))}
         </div>
@@ -204,6 +368,7 @@ const Timeline = () => {
         .timeline-wrapper {
           position: relative;
           padding: 32px 0;
+          min-height: 600px;
         }
         
         .timeline-track {
@@ -214,6 +379,51 @@ const Timeline = () => {
           width: 3px;
           background: linear-gradient(to bottom, rgba(241, 194, 50, 0.1), #f1c232, rgba(241, 194, 50, 0.1));
           transform: translateX(-50%);
+        }
+        
+        .progress-indicator {
+          position: absolute;
+          left: 50%;
+          transform: translateX(-50%);
+          top: 0;
+          z-index: 10;
+          transition: top 0.5s cubic-bezier(0.33, 1, 0.68, 1);
+          pointer-events: none;
+        }
+        
+        .indicator-circle {
+          width: 36px;
+          height: 36px;
+          background: #f1c232;
+          border: 3px solid #ffffff;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 0 16px rgba(241, 194, 50, 0.8);
+          /* Perfect centering on the track */
+          position: absolute;
+          left: 0;
+          top: 0;
+          transform: translate(-50%, -50%);
+          z-index: 20;
+        }
+        
+        .indicator-icon {
+          color: #112735;
+        }
+        
+        .animate-slide-down {
+          animation: slideDownAndStop 2.5s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+        }
+        
+        @keyframes slideDownAndStop {
+          0% {
+            top: 0;
+          }
+          100% {
+            top: calc(var(--completed-percent, 0.6) * 100%);
+          }
         }
         
         .timeline-event {
@@ -235,9 +445,10 @@ const Timeline = () => {
         
         .timeline-connector {
           position: absolute;
+          /* Center point for the timeline events */
           top: 24px;
           left: 50%;
-          transform: translateX(-50%);
+          /* Don't transform the connector - let the dot handle its own positioning */
           z-index: 2;
         }
         
@@ -252,10 +463,48 @@ const Timeline = () => {
           justify-content: center;
           box-shadow: 0 0 16px rgba(241, 194, 50, 0.5);
           transition: all 0.3s ease;
+          overflow: hidden;
+          /* Center perfectly on the timeline's midline */
+          position: absolute;
+          left: 0;
+          top: 0;
+          transform: translate(-50%, -50%);
+        }
+        
+        .timeline-dot.completed {
+          background: linear-gradient(135deg, #1a3d54, #2a5274);
+          border-color: #f1c232;
         }
         
         .timeline-icon {
           color: #f1c232;
+          transition: transform 0.4s ease, opacity 0.4s ease;
+        }
+        
+        .timeline-dot.completed .timeline-icon {
+          color: #f1c232;
+        }
+        
+        .icon-transition .timeline-icon {
+          animation: iconPulse 0.6s ease forwards;
+        }
+        
+        @keyframes iconPulse {
+          0% {
+            transform: scale(1);
+            opacity: 1;
+          }
+          50% {
+            transform: scale(0);
+            opacity: 0;
+          }
+          51% {
+            content: '';
+          }
+          100% {
+            transform: scale(1);
+            opacity: 1;
+          }
         }
         
         .timeline-card {
@@ -269,6 +518,11 @@ const Timeline = () => {
           transition: all 0.3s ease;
           position: relative;
           overflow: hidden;
+        }
+        
+        .timeline-card.completed {
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          background: linear-gradient(135deg, rgba(241, 194, 50, 0.05), rgba(241, 194, 50, 0.15));
         }
         
         .timeline-card::before {
@@ -314,7 +568,7 @@ const Timeline = () => {
         
         .timeline-date {
           display: inline-block;
-          font-size: 14px;
+          font-size: 20px;
           font-weight: 500;
           color: #f1c232;
           margin-bottom: 8px;
@@ -337,32 +591,13 @@ const Timeline = () => {
           margin-bottom: 16px;
         }
         
-        .timeline-button {
-          display: inline-flex;
-          align-items: center;
-          gap: 4px;
-          font-size: 14px;
-          font-weight: 600;
-          color: #f1c232;
-          padding: 0;
-          background: transparent;
-          border: none;
-          cursor: pointer;
-          transition: all 0.3s ease;
-        }
-        
-        .timeline-button:hover {
-          color: #ffffff;
-          transform: translateX(4px);
-        }
-        
         .animate-in {
           opacity: 1;
           transform: translateY(0);
         }
         
         .timeline-event:hover .timeline-dot {
-          transform: scale(1.1);
+          transform: translate(-50%, -50%) scale(1.1);
           box-shadow: 0 0 24px rgba(241, 194, 50, 0.7);
         }
         
@@ -408,6 +643,15 @@ const Timeline = () => {
             left: 24px;
           }
           
+          .progress-indicator {
+            left: 24px;
+          }
+          
+          .indicator-circle {
+            /* Maintain perfect alignment on mobile */
+            transform: translate(-50%, -50%);
+          }
+          
           .timeline-left, .timeline-right {
             justify-content: flex-start;
             padding-left: 64px;
@@ -416,6 +660,15 @@ const Timeline = () => {
           
           .timeline-connector {
             left: 24px;
+          }
+          
+          .timeline-dot {
+            /* Perfect alignment on mobile */
+            transform: translate(-50%, -50%);
+          }
+          
+          .timeline-event:hover .timeline-dot {
+            transform: translate(-50%, -50%) scale(1.1);
           }
           
           .timeline-card {
