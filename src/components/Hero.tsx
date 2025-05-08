@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import { ArrowRight, ChevronDown } from "lucide-react";
 import Image from "../assets/logo.jpg";
+import { WavyBackground } from './ui/wavy-background';
 
 const Hero = () => {
   const phrases = [
