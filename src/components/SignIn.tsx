@@ -143,8 +143,10 @@ const SignIn = () => {
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 2rem;
+            padding: 2rem; /* Default padding for larger screens */
             position: relative;
+            min-height: 100vh; /* Ensure container takes full viewport height */
+            box-sizing: border-box; /* Include padding in width/height calculations */
           }
           
           /* Back to home link */
@@ -172,9 +174,9 @@ const SignIn = () => {
           .sign-in-card {
             display: flex;
             width: 100%;
-            max-width: 1000px; /* Increased width from 900px to 1000px */
-            min-height: 500px;
-            border-radius: 20px;
+            max-width: 1100px; /* Increased width from 1000px to 1100px */
+            min-height: 550px; /* Slightly increased min-height for better proportion */
+            border-radius: 24px; /* Slightly larger border radius */
             position: relative;
             overflow: hidden;
             isolation: isolate;
@@ -214,11 +216,13 @@ const SignIn = () => {
           
           /* Brand Panel Styles */
           .brand-panel {
-            flex: 0 0 38%; /* Slightly reduced from 40% to balance the wider card */
+            flex: 0 0 38%; 
             background-color: rgba(17, 39, 53, 0.5);
             color: white;
             display: flex;
             flex-direction: column;
+            align-items: center; /* Center content vertically */
+            justify-content: center; /* Center content horizontally */
             position: relative;
             overflow: hidden;
             padding: 2rem;
@@ -333,6 +337,7 @@ const SignIn = () => {
             padding: 3rem;
             display: flex;
             flex-direction: column;
+            justify-content: center; /* Center form vertically */
             background-color: rgba(255, 255, 255, 0.03);
             backdrop-filter: blur(5px);
             position: relative;
@@ -345,12 +350,14 @@ const SignIn = () => {
             color: white;
             margin-bottom: 2rem;
             position: relative;
+            text-align: center; /* Center title */
           }
           
           .form-title::after {
             content: '';
             position: absolute;
-            left: 0;
+            left: 50%; /* Center the underline */
+            transform: translateX(-50%); /* Center the underline */
             bottom: -8px;
             width: 40px;
             height: 3px;
@@ -368,8 +375,8 @@ const SignIn = () => {
             flex-direction: column;
             gap: 1.5rem;
             margin-bottom: 2rem;
-            width: 100%; /* Ensures the form uses the full width of its container */
-            max-width: 480px; /* Set maximum width for the form elements */
+            width: 100%; 
+            max-width: 450px; /* Slightly adjusted max-width for form elements */
             margin-left: auto;
             margin-right: auto;
           }
@@ -610,42 +617,59 @@ const SignIn = () => {
           }
           
           /* Enhanced Responsive styles */
+          @media (max-width: 1200px) { /* New breakpoint for smoother transition */
+            .sign-in-card {
+              max-width: 1000px;
+              min-height: 520px;
+            }
+            .form-panel {
+              padding: 2.5rem;
+            }
+          }
+
           @media (max-width: 1024px) {
             .sign-in-card {
-              max-width: 900px;
+              max-width: 90%; /* Use percentage for better fluidity */
+              min-height: auto; /* Allow height to adjust */
+            }
+            .brand-panel {
+              padding: 1.5rem;
+            }
+            .form-panel {
+              padding: 2rem;
             }
           }
           
           @media (max-width: 900px) {
-            .sign-in-card {
-              max-width: 90%;
-            }
-            
+            /* .sign-in-card max-width: 90% is already good from 1024px breakpoint */
             .form-panel {
-              padding: 2.5rem;
+              padding: 2rem; /* Consistent padding */
             }
-            
             .sign-in-form {
-              max-width: 100%;
+              max-width: 100%; /* Allow form to use available space */
             }
           }
           
           @media (max-width: 768px) {
+            .sign-in-container {
+              padding: 1rem; /* Reduce overall container padding */
+            }
             .sign-in-card {
               flex-direction: column;
-              max-width: 90%;
+              max-width: 95%; /* Slightly more width for stacked layout */
+              border-radius: 16px;
             }
             
             .brand-panel {
-              padding: 2rem 1rem;
-              flex: 0 0 auto;
-              min-height: 200px;
+              padding: 1.5rem 1rem;
+              flex: 0 0 auto; /* Reset flex basis */
+              min-height: 180px; /* Adjust min-height */
               border-right: none;
               border-bottom: 1px solid rgba(255, 255, 255, 0.18);
             }
             
             .form-panel {
-              padding: 2rem 1.5rem;
+              padding: 1.5rem;
             }
             
             .logo-container {
@@ -664,65 +688,95 @@ const SignIn = () => {
             }
             
             .form-title {
+              font-size: 22px;
               margin-bottom: 1.5rem;
             }
             
-            .sign-in-container {
-              padding: 1.5rem;
-            }
-            
             .back-to-home-link {
-              top: 15px;
-              left: 15px;
+              top: 10px;
+              left: 10px;
+              padding: 6px 12px;
+              font-size: 14px;
+            }
+            .sign-in-form {
+              gap: 1.25rem; /* Reduce gap between form elements */
             }
           }
           
           @media (max-width: 480px) {
             .sign-in-card {
               max-width: 100%;
-              margin: 0;
-              border-radius: 15px;
+              margin: 0; /* Card touches edges of container padding */
+              border-radius: 12px; /* Softer radius for small screens */
+              min-height: auto;
             }
             
             .sign-in-container {
-              padding: 1rem;
+              padding: 0.75rem; /* Further reduce container padding */
             }
             
+            .brand-panel {
+              min-height: 150px;
+              padding: 1rem 0.75rem;
+            }
             .form-panel {
-              padding: 1.5rem 1rem;
+              padding: 1.25rem 1rem;
             }
             
             .back-to-home-link {
-              padding: 6px 12px;
-              top: 10px;
-              left: 10px;
-              font-size: 14px;
+              padding: 5px 10px;
+              font-size: 13px;
             }
             
             .form-group {
-              margin-bottom: 0.75rem;
+              margin-bottom: 0.75rem; /* Already set, but ensure consistency */
             }
             
             .form-input {
               padding: 12px;
+              font-size: 15px; /* Slightly larger for better readability on mobile */
+            }
+            .form-label {
+              font-size: 15px;
+            }
+            .form-label.active {
+              font-size: 11px;
             }
             
             .form-title {
-              font-size: 22px;
+              font-size: 20px;
             }
             
             .logo-container {
-              width: 70px;
-              height: 70px;
+              width: 60px;
+              height: 60px;
             }
             
             .logo {
-              width: 50px;
-              height: 50px;
+              width: 45px;
+              height: 45px;
             }
             
             .brand-name {
-              font-size: 22px;
+              font-size: 20px;
+            }
+            .brand-tagline {
+              font-size: 13px;
+              margin-bottom: 1.5rem;
+            }
+            .sign-in-button {
+              padding: 12px;
+              font-size: 15px;
+            }
+            .alt-actions {
+              font-size: 13px;
+            }
+            .forgot-password {
+              font-size: 12px;
+            }
+            .security-badge {
+              font-size: 11px;
+              padding: 4px 8px;
             }
           }
         `}</style>
