@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import { Menu, X } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
 import logo from '../assets/logo.webp';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
+  const navigate = useNavigate();
 
   // Handle scroll event to change navbar style
   useEffect(() => {
@@ -47,6 +49,11 @@ const Navbar = () => {
     setActiveSection(sectionId);
   };
 
+  // Handle sign in button click
+  const handleSignInClick = () => {
+    navigate('/signin');
+  };
+
   return (
     <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'py-4' : 'py-6'}`}>
       {/* Navbar background with glass effect */}
@@ -61,7 +68,7 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="flex justify-between items-center">
           {/* Logo */}
-          <div className="flex items-center group">
+          <Link to="/" className="flex items-center group">
             <div className={`relative p-1 ${scrolled ? 'nav-logo-scrolled' : 'nav-logo'}`}>
               <img 
                 src={logo} 
@@ -73,7 +80,7 @@ const Navbar = () => {
             <span className={`ml-2 text-xl font-bold transition-colors duration-300 ${scrolled ? 'text-gold' : 'text-white'} logo-text`}>
               Rise Up <span className="font-black">Mora</span>
             </span>
-          </div>
+          </Link>
           
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center space-x-1">
@@ -93,7 +100,10 @@ const Navbar = () => {
                 )}
               </a>
             ))}
-            <button className="ml-4 px-6 py-3 font-medium text-dark-blue bg-gold rounded-full transition-all duration-300 hover:shadow-lg hover:shadow-gold/20 transform hover:-translate-y-1 sign-in-btn">
+            <button 
+              onClick={handleSignInClick}
+              className="ml-4 px-6 py-3 font-medium text-dark-blue bg-gold rounded-full transition-all duration-300 hover:shadow-lg hover:shadow-gold/20 transform hover:-translate-y-1 sign-in-btn"
+            >
               Sign In
             </button>
           </div>
@@ -131,14 +141,17 @@ const Navbar = () => {
             </a>
           ))}
           <div className="pt-2">
-            <button className="w-full px-6 py-3 font-medium text-dark-blue bg-gold rounded-full transition-all duration-300 hover:shadow-lg hover:shadow-gold/20">
+            <button 
+              onClick={handleSignInClick}
+              className="w-full px-6 py-3 font-medium text-dark-blue bg-gold rounded-full transition-all duration-300 hover:shadow-lg hover:shadow-gold/20"
+            >
               Sign In
             </button>
           </div>
         </div>
       </div>
 
-      {/* Add custom CSS */}
+      {/* Keep existing styles */}
       <style>{`
         .bg-dark-blue {
           background-color: #112735;
