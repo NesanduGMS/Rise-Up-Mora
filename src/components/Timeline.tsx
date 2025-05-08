@@ -70,15 +70,15 @@ const TimelineEvent = ({ date, title, description, index, isCompleted, isActive 
       <div className="timeline-connector">
         <div 
           ref={dotRef}
-          className={`timeline-dot ${showCheck ? 'completed' : ''}`}
+          className={`timeline-dot ${isCompleted && showCheck ? 'completed' : ''}`}
         >
-          {showCheck ? 
+          {isCompleted && showCheck ? 
             <Check size={20} className="timeline-icon" /> : 
             <Calendar size={20} className="timeline-icon" />
           }
         </div>
       </div>
-      <div className={`timeline-card ${showCheck ? 'completed' : ''}`}>
+      <div className={`timeline-card ${isCompleted && showCheck ? 'completed' : ''}`}>
         <div className="timeline-date">{date}</div>
         <h3 className="timeline-title">{title}</h3>
         <p className="timeline-description">{description}</p>
@@ -95,6 +95,7 @@ const Timeline = () => {
   const [activeEventIndex, setActiveEventIndex] = useState<number>(-1);
   const [isVisible, setIsVisible] = useState<boolean>(false);
   const [progress, setProgress] = useState<number>(0);
+  const [animationTriggered, setAnimationTriggered] = useState<boolean>(false);
   
   const events = [
     {
@@ -139,43 +140,64 @@ const Timeline = () => {
       
       const rect = timelineRef.current.getBoundingClientRect();
       const triggerPoint = window.innerHeight * 0.8;
-       
+      
+      // Check if timeline is in viewport
       const isInViewport = rect.top < triggerPoint;
       
-      if (isInViewport && !isVisible) {
+      if (isInViewport && (!isVisible || !animationTriggered)) {
         setIsVisible(true);
         
+        // Reset progress indicator to top position first
         if (progressIndicatorRef.current) {
           progressIndicatorRef.current.style.top = '0%';
           
+          // Wait a bit before triggering the animation
           setTimeout(() => {
-            if (completedEvents > 0 && events.length > 0) {
-              const eventPositionPercentage = (completedEvents - 0.5) / events.length * 100;
-              progressIndicatorRef.current.style.setProperty('--completed-percent', (eventPositionPercentage / 100).toString());
-            } else {
-              progressIndicatorRef.current.style.setProperty('--completed-percent', '0');
+            if (!animationTriggered) {
+              setAnimationTriggered(true);
+              
+              // Calculate the correct final position based on completed events
+              if (completedEvents > 0 && events.length > 0) {
+                const eventPositionPercentage = (completedEvents - 0.5) / events.length * 100;
+                progressIndicatorRef.current.style.setProperty('--completed-percent', (eventPositionPercentage / 100).toString());
+              } else {
+                progressIndicatorRef.current.style.setProperty('--completed-percent', '0');
+              }
+              
+              // Add animation class to trigger the slide down effect
+              progressIndicatorRef.current.classList.add('animate-slide-down');
+              
+              // Start checking active events after a short delay
+              setTimeout(() => {
+                for (let i = 0; i < completedEvents; i++) {
+                  setTimeout(() => {
+                    setActiveEventIndex(i);
+                  }, i * 600); // Stagger the activation of each event
+                }
+              }, 300);
             }
-            progressIndicatorRef.current.classList.add('animate-slide-down');
           }, 300);
         }
       } else if (!isInViewport && isVisible) {
         setIsVisible(false);
+        setAnimationTriggered(false);
         if (progressIndicatorRef.current) {
           progressIndicatorRef.current.classList.remove('animate-slide-down');
         }
+        setActiveEventIndex(-1);
       }
     };
     
-    
+    // Check on load/refresh in case the timeline is already visible
     checkVisibility();
     
     window.addEventListener('scroll', checkVisibility);
     return () => window.removeEventListener('scroll', checkVisibility);
-  }, [isVisible, completedEvents, events.length]);
+  }, [isVisible, completedEvents, events.length, animationTriggered]);
 
   useEffect(() => {
     const updateProgressIndicator = () => {
-      if (!timelineRef.current || !progressIndicatorRef.current || !trackRef.current) return;
+      if (!timelineRef.current || !progressIndicatorRef.current || !trackRef.current || animationTriggered) return;
       
       const timelineRect = timelineRef.current.getBoundingClientRect();
       const trackRect = trackRef.current.getBoundingClientRect();
@@ -214,31 +236,23 @@ const Timeline = () => {
       
       // Update the progress state
       setProgress(finalProgress);
-      
-      // Set the active event index - THIS IS KEY FOR THE ICON TRANSITIONS
-      // Only trigger icon transitions for events that are both in view AND completed
-      if (currentEventIndex !== activeEventIndex && 
-          currentEventIndex >= 0 && 
-          currentEventIndex < completedEvents) {
-        setActiveEventIndex(currentEventIndex);
-      }
     };
     
-    
-    updateProgressIndicator();
-    
-    
-    window.addEventListener('scroll', updateProgressIndicator);
-    return () => window.removeEventListener('scroll', updateProgressIndicator);
-  }, [completedEvents, activeEventIndex, events.length]);
+    // Only run the scroll-based update if animation hasn't been triggered
+    if (!animationTriggered) {
+      updateProgressIndicator();
+      
+      window.addEventListener('scroll', updateProgressIndicator);
+      return () => window.removeEventListener('scroll', updateProgressIndicator);
+    }
+  }, [completedEvents, activeEventIndex, events.length, animationTriggered]);
 
   
   useEffect(() => {
-    if (progressIndicatorRef.current) {
-      
+    if (progressIndicatorRef.current && !animationTriggered) {
       progressIndicatorRef.current.style.top = `${progress * 100}%`;
     }
-  }, [progress]);
+  }, [progress, animationTriggered]);
 
   
   const isEventCompleted = (index: number) => {
@@ -285,7 +299,7 @@ const Timeline = () => {
       <style>{`
         .timeline-section {
           padding: 120px 0;
-          background-color: #112735;
+          background-color: #ffffff;
           position: relative;
           overflow: hidden;
         }
@@ -337,7 +351,7 @@ const Timeline = () => {
         .timeline-heading {
           font-size: 36px;
           font-weight: 700;
-          color: #ffffff;
+          color: #112735;
           margin-bottom: 16px;
         }
         
@@ -377,7 +391,7 @@ const Timeline = () => {
           bottom: 0;
           left: 50%;
           width: 3px;
-          background: linear-gradient(to bottom, rgba(241, 194, 50, 0.1), #f1c232, rgba(241, 194, 50, 0.1));
+          background: linear-gradient(to bottom, rgba(17, 39, 53, 0.1), #112735, rgba(17, 39, 53, 0.1));
           transform: translateX(-50%);
         }
         
@@ -455,7 +469,7 @@ const Timeline = () => {
         .timeline-dot {
           width: 48px;
           height: 48px;
-          background: linear-gradient(135deg, #112735, #1a3d54);
+          background: linear-gradient(180deg, #112735, #112735);
           border: 3px solid #f1c232;
           border-radius: 50%;
           display: flex;
@@ -472,7 +486,7 @@ const Timeline = () => {
         }
         
         .timeline-dot.completed {
-          background: linear-gradient(135deg, #1a3d54, #2a5274);
+          background: linear-gradient(135deg, #f1c232, #f1c232);
           border-color: #f1c232;
         }
         
@@ -482,7 +496,7 @@ const Timeline = () => {
         }
         
         .timeline-dot.completed .timeline-icon {
-          color: #f1c232;
+          color: #ffffff;
         }
         
         .icon-transition .timeline-icon {
@@ -509,29 +523,34 @@ const Timeline = () => {
         
         .timeline-card {
           max-width: 450px;
-          background: linear-gradient(135deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.05));
-          backdrop-filter: blur(10px);
-          border: 1px solid rgba(241, 194, 50, 0.1);
+          background: #112735;
+          border: 1px solid rgba(241, 194, 50, 0.2);
           border-radius: 16px;
           padding: 24px;
-          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
           transition: all 0.3s ease;
           position: relative;
           overflow: hidden;
         }
         
         .timeline-card.completed {
-          border: 1px solid rgba(255, 255, 255, 0.2);
-          background: linear-gradient(135deg, rgba(241, 194, 50, 0.05), rgba(241, 194, 50, 0.15));
+          border: 1px solid rgba(241, 194, 50, 0.6);
+          background: linear-gradient(135deg, #112735, #183a4d);
         }
         
         .timeline-card::before {
           content: '';
           position: absolute;
           inset: 0;
-          background: radial-gradient(circle at 0% 0%, rgba(241, 194, 50, 0.15), transparent 70%);
+          background: radial-gradient(circle at 0% 0%, rgba(241, 194, 50, 0.2), transparent 70%);
           opacity: 0;
           transition: opacity 0.5s ease;
+        }
+        
+        .timeline-card:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
+          border-color: rgba(241, 194, 50, 0.5);
         }
         
         .timeline-card:hover::before {
@@ -546,24 +565,29 @@ const Timeline = () => {
           width: 16px;
           height: 16px;
           transform: rotate(45deg);
-          background: linear-gradient(135deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.05));
-          border: 1px solid rgba(241, 194, 50, 0.1);
+          background: #112735;
+          border: 1px solid rgba(241, 194, 50, 0.2);
         }
         
         .timeline-left .timeline-card::after {
           right: -8px;
-          border-right: 1px solid rgba(241, 194, 50, 0.3);
-          border-top: 1px solid rgba(241, 194, 50, 0.3);
+          border-right: 1px solid rgba(241, 194, 50, 0.2);
+          border-top: 1px solid rgba(241, 194, 50, 0.2);
           border-left: 0;
           border-bottom: 0;
         }
         
         .timeline-right .timeline-card::after {
           left: -8px;
-          border-left: 1px solid rgba(241, 194, 50, 0.3);
-          border-bottom: 1px solid rgba(241, 194, 50, 0.3);
+          border-left: 1px solid rgba(241, 194, 50, 0.2);
+          border-bottom: 1px solid rgba(241, 194, 50, 0.2);
           border-right: 0;
           border-top: 0;
+        }
+        
+        .timeline-card.completed .timeline-card::after {
+          background: #183a4d;
+          border-color: rgba(241, 194, 50, 0.6);
         }
         
         .timeline-date {
@@ -573,7 +597,7 @@ const Timeline = () => {
           color: #f1c232;
           margin-bottom: 8px;
           padding: 4px 10px;
-          background: rgba(241, 194, 50, 0.1);
+          background: rgba(241, 194, 50, 0.15);
           border-radius: 20px;
         }
         
@@ -587,7 +611,7 @@ const Timeline = () => {
         .timeline-description {
           font-size: 15px;
           line-height: 1.6;
-          color: rgba(255, 255, 255, 0.7);
+          color: rgba(255, 255, 255, 0.85);
           margin-bottom: 16px;
         }
         
@@ -620,7 +644,7 @@ const Timeline = () => {
         .blob-2 {
           width: 350px;
           height: 350px;
-          background: radial-gradient(circle, rgba(17, 39, 53, 0.8) 0%, rgba(17, 39, 53, 0) 70%);
+          background: radial-gradient(circle, rgba(17, 39, 53, 0.08) 0%, rgba(17, 39, 53, 0) 70%);
           bottom: 5%;
           left: -50px;
           animation: float-slow 15s infinite alternate-reverse;
@@ -678,10 +702,11 @@ const Timeline = () => {
           .timeline-left .timeline-card::after, 
           .timeline-right .timeline-card::after {
             left: -8px;
-            border-left: 1px solid rgba(241, 194, 50, 0.3);
-            border-bottom: 1px solid rgba(241, 194, 50, 0.3);
+            border-left: 1px solid rgba(241, 194, 50, 0.2);
+            border-bottom: 1px solid rgba(241, 194, 50, 0.2);
             border-right: 0;
             border-top: 0;
+            background: #112735;
           }
           
           .timeline-header {
