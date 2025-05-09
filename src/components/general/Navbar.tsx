@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Menu, X } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import logo from '../../assets/logo.webp';
+import logo2 from '../../assets/logo2.png';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -19,7 +20,7 @@ const Navbar = () => {
       }
 
       // Determine active section based on scroll position
-      const sections = ['home', 'about', 'timeline', 'contact'];
+      const sections = ['home', 'about', 'timeline','partners', 'contact'];
       for (const sectionId of sections) {
         const section = document.getElementById(sectionId);
         if (section) {
@@ -70,13 +71,13 @@ const Navbar = () => {
           {/* Logo - Simplified without effects */}
           <Link to="/" className="flex items-center">
             <img
-              src={logo}
+              src={scrolled ? logo2 : logo}
               alt="Rise Up Mora Logo"
-              className="h-10 w-auto"
+              className="h-10 w-auto transition-all duration-300"
             />
             <span
-              className={`ml-2 text-xl font-bold transition-colors duration-300 ${
-                scrolled ? 'text-gold' : 'text-white'
+              className={`ml-2 text-2xl font-bold transition-colors duration-300 ${
+                scrolled ? 'text-gold' : 'text-[#112735]'
               } logo-text`}
             >
               Rise Up <span className="font-black">Mora</span>
@@ -85,7 +86,7 @@ const Navbar = () => {
           
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center space-x-1">
-            {['home', 'about', 'timeline', 'contact'].map((item) => (
+            {['home', 'about', 'timeline','partners', 'contact'].map((item) => (
               <a 
                 key={item}
                 onClick={() => scrollToSection(item)}

@@ -136,7 +136,7 @@ const Hero = () => {
 
                 {/* Description */}
                 <motion.p
-                  className="max-w-2xl mx-auto text-lg leading-relaxed mb-10"
+                  className="max-w-2xl mx-auto text-lg leading-relaxed mb-10 font-medium"
                   style={{ 
                     color: "#102734", 
                     textShadow: "0 0 8px rgba(255, 255, 255, 0.4), 0 0 16px rgba(255, 255, 255, 0.3), 0 0 24px rgba(255, 255, 255, 0.2)"
