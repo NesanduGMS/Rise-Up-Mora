@@ -159,13 +159,19 @@ const Timeline = () => {
               // Calculate the correct final position based on completed events
               if (completedEvents > 0 && events.length > 0) {
                 const eventPositionPercentage = (completedEvents - 0.5) / events.length * 100;
-                progressIndicatorRef.current.style.setProperty('--completed-percent', (eventPositionPercentage / 100).toString());
+                if (progressIndicatorRef.current) {
+                  progressIndicatorRef.current.style.setProperty('--completed-percent', (eventPositionPercentage / 100).toString());
+                }
               } else {
-                progressIndicatorRef.current.style.setProperty('--completed-percent', '0');
+                if (progressIndicatorRef.current) {
+                  progressIndicatorRef.current.style.setProperty('--completed-percent', '0');
+                }
               }
               
               // Add animation class to trigger the slide down effect
-              progressIndicatorRef.current.classList.add('animate-slide-down');
+              if (progressIndicatorRef.current) {
+                progressIndicatorRef.current.classList.add('animate-slide-down');
+              }
               
               // Start checking active events after a short delay
               setTimeout(() => {
