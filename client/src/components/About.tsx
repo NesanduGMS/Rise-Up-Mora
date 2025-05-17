@@ -96,10 +96,8 @@ const AboutSection = () => {
                 }`}></div>
 
                 <p className="text-lg text-gray-700 mb-10 leading-relaxed">
-                  A transformative initiative designed for self-driven
-                  undergraduates, bridging the gap between academic knowledge
-                  and industry expectations through a comprehensive program of
-                  webinars, mock interviews, and interactive workshops.
+                  Rise Up Mora is a prestigious internship-focused career development initiative launched by the IEEE Student Branch of the University of Moratuwa in 2021. It has quickly become the most awaited internship-oriented experience at Sri Lanka’s leading technological university, highlighted by its flagship Internship and Mock Interview Fair, which connects over 5,000 undergraduates from Sri Lanka’s leading technological university with the top names in the industry. With a strong five-year track record, Rise Up Mora has garnered a solid reputation both within the University of Moratuwa and across the IEEE Student Branch community in Sri Lanka, recognized by several awards for its impact, including the “Best Industry Collaborative Project” at the IEEE Sri Lanka Section Awards 2023.
+
                 </p>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
