@@ -127,6 +127,18 @@ const Timeline = () => {
       time: "5:00 PM",
       title: "Registrations Closing",
       description: "Registrations Closing for the University of Moratuwa undergraduates"
+    },
+    {
+      date: "31st July 2025",
+      time: "5:00 PM",
+      title: "Internship & Mock Interview Fair",
+      description: "A career event where students can explore internship opportunities and practice job interviews with professionals."
+    },
+    {
+      date: "August, 2025",
+      time: "5:00 PM",
+      title: "Sessions",
+      description: "Industry Visit/Company Awareness/Industry Exposure sessions"
     }
   ];
 
