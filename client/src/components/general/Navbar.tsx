@@ -1,11 +1,14 @@
 import { useState, useEffect } from 'react';
 import { Menu, X } from 'lucide-react';
-import logo from '../assets/logo.webp';
+import { Link, useNavigate } from 'react-router-dom';
+import logo from '../../assets/logo.webp';
+import logo2 from '../../assets/logo2.png';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
+  const navigate = useNavigate();
 
   // Handle scroll event to change navbar style
   useEffect(() => {
@@ -17,7 +20,7 @@ const Navbar = () => {
       }
 
       // Determine active section based on scroll position
-      const sections = ['home', 'about', 'timeline', 'contact'];
+      const sections = ['home', 'about', 'timeline','partners', 'contact'];
       for (const sectionId of sections) {
         const section = document.getElementById(sectionId);
         if (section) {
@@ -47,6 +50,11 @@ const Navbar = () => {
     setActiveSection(sectionId);
   };
 
+  // Handle sign in button click
+  const handleSignInClick = () => {
+    navigate('/signin');
+  };
+
   return (
     <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'py-4' : 'py-6'}`}>
       {/* Navbar background with glass effect */}
@@ -60,31 +68,32 @@ const Navbar = () => {
       {/* Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="flex justify-between items-center">
-          {/* Logo */}
-          <div className="flex items-center group">
-            <div className={`relative p-1 ${scrolled ? 'nav-logo-scrolled' : 'nav-logo'}`}>
-              <img 
-                src={logo} 
-                alt="Rise Up Mora Logo" 
-                className="h-10 w-auto transition-all duration-300 group-hover:scale-110"
-              />
-              <div className="logo-glow"></div>
-            </div>
-            <span className={`ml-2 text-xl font-bold transition-colors duration-300 ${scrolled ? 'text-gold' : 'text-white'} logo-text`}>
+          {/* Logo - Simplified without effects */}
+          <Link to="/" className="flex items-center">
+            <img
+              src={scrolled ? logo2 : logo}
+              alt="Rise Up Mora Logo"
+              className="h-10 w-auto transition-all duration-300"
+            />
+            <span
+              className={`ml-2 text-2xl font-bold transition-colors duration-300 ${
+                scrolled ? 'text-gold' : 'text-[#112735]'
+              } logo-text`}
+            >
               Rise Up <span className="font-black">Mora</span>
             </span>
-          </div>
+          </Link>
           
           {/* Desktop Menu */}
           <div className="hidden md:flex items-center space-x-1">
-            {['home', 'about', 'timeline', 'contact'].map((item) => (
+            {['home', 'about', 'timeline','partners', 'contact'].map((item) => (
               <a 
                 key={item}
                 onClick={() => scrollToSection(item)}
                 className={`relative px-4 py-3 mx-1 font-medium uppercase text-sm tracking-wider cursor-pointer transition-all duration-300 nav-link ${
                   activeSection === item 
                     ? `${scrolled ? 'text-gold' : 'text-gold'} nav-active` 
-                    : `${scrolled ? 'text-white hover:text-gold' : 'text-white hover:text-gold'}`
+                    : `${scrolled ? 'text-gold hover:text-gold' : 'text-gold hover:text-gold'}`
                 }`}
               >
                 {item.charAt(0).toUpperCase() + item.slice(1)}
@@ -93,7 +102,10 @@ const Navbar = () => {
                 )}
               </a>
             ))}
-            <button className="ml-4 px-6 py-3 font-medium text-dark-blue bg-gold rounded-full transition-all duration-300 hover:shadow-lg hover:shadow-gold/20 transform hover:-translate-y-1 sign-in-btn">
+            <button 
+              onClick={handleSignInClick}
+              className="ml-4 px-6 py-3 font-medium text-dark-blue bg-gold rounded-full transition-all duration-300 hover:shadow-lg hover:shadow-gold/20 transform hover:-translate-y-1 sign-in-btn"
+            >
               Sign In
             </button>
           </div>
@@ -124,21 +136,24 @@ const Navbar = () => {
               className={`block px-4 py-3 text-lg font-medium border-l-2 transition-all duration-300 cursor-pointer ${
                 activeSection === item 
                   ? 'border-gold text-gold' 
-                  : 'border-transparent text-white hover:text-gold hover:border-gold/50'
+                  : 'border-transparent text-gold hover:text-gold hover:border-gold/50'
               }`}
             >
               {item.charAt(0).toUpperCase() + item.slice(1)}
             </a>
           ))}
           <div className="pt-2">
-            <button className="w-full px-6 py-3 font-medium text-dark-blue bg-gold rounded-full transition-all duration-300 hover:shadow-lg hover:shadow-gold/20">
+            <button 
+              onClick={handleSignInClick}
+              className="w-full px-6 py-3 font-medium text-dark-blue bg-gold rounded-full transition-all duration-300 hover:shadow-lg hover:shadow-gold/20"
+            >
               Sign In
             </button>
           </div>
         </div>
       </div>
 
-      {/* Add custom CSS */}
+      {/* Keep existing styles */}
       <style>{`
         .bg-dark-blue {
           background-color: #112735;
@@ -158,43 +173,6 @@ const Navbar = () => {
 
         .text-white {
           color: #ffffff;
-        }
-
-        .nav-logo {
-          position: relative;
-          padding: 8px;
-          border-radius: 50%;
-          background: #f1c232;
-          overflow: hidden;
-          transition: all 0.3s ease;
-        }
-
-        .nav-logo-scrolled {
-          position: relative;
-          padding: 8px;
-          border-radius: 50%;
-          background: transparent;
-          border: 2px solid #f1c232;
-          overflow: hidden;
-          transition: all 0.3s ease;
-        }
-
-        .logo-glow {
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          width: 100%;
-          height: 100%;
-          background: radial-gradient(circle, rgba(241, 194, 50, 0.7) 0%, rgba(241, 194, 50, 0) 70%);
-          transform: translate(-50%, -50%);
-          pointer-events: none;
-          opacity: 0;
-          transition: opacity 0.5s ease;
-        }
-
-        .nav-logo:hover .logo-glow,
-        .nav-logo-scrolled:hover .logo-glow {
-          opacity: 1;
         }
 
         .logo-text {
