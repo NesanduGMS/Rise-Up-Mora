@@ -99,34 +99,46 @@ const Timeline = () => {
   
   const events = [
     {
-      date: "August 27th, 2024",
+      date: "July 14th, 2025 ",
       time: "3:00 PM",
-      title: "Session 01 BY MAS",
-      description: "LinkedIn profile creation and maintenance. Learn how to showcase your skills and experience effectively."
+      title: "Workshop 01",
+      description: "LinkedIn Profile Creation and Maintenance "
     },
     {
-      date: "September 3rd, 2024",
+      date: "July 17th, 2025",
       time: "6:00 PM",
-      title: "Session 02 BY IFS",
-      description: "Excelling in CV writing. Craft a compelling resume that captures attention and highlights your strengths."
+      title: "Registrations Opening",
+      description: "Registrations Opening for the University of Moratuwa undergraduates"
     },
     {
-      date: "September 10th, 2024",
+      date: "July 22nd, 2025 ",
       time: "6:00 PM",
-      title: "Session 03 BY IFS",
-      description: "How to face an Interview. Master the art of presenting yourself confidently and answering questions effectively."
+      title: "Workshop 02",
+      description: "Excelling in CV Writing"
     },
     {
-      date: "September 17th, 2024",
+      date: "July 28th, 2025 ",
       time: "4:00 PM",
-      title: "Session 04 BY WSO2",
-      description: "Technical interview preparation. Practice solving common coding problems and system design challenges."
+      title: "Workshop 03",
+      description: "Mastering the Art of Acing Interviews Workshop"
     },
     {
-      date: "September 24th, 2024",
+      date: "July 29th, 2025",
       time: "5:00 PM",
-      title: "Session 05 BY VIRTUSA",
-      description: "Industry networking event. Connect with professionals and learn about opportunities in the tech industry."
+      title: "Registrations Closing",
+      description: "Registrations Closing for the University of Moratuwa undergraduates"
+    },
+    {
+      date: "31st July 2025",
+      time: "5:00 PM",
+      title: "Internship & Mock Interview Fair",
+      description: "A career event where students can explore internship opportunities and practice job interviews with professionals."
+    },
+    {
+      date: "August, 2025",
+      time: "5:00 PM",
+      title: "Sessions",
+      description: "Industry Visit/Company Awareness/Industry Exposure sessions"
     }
   ];
 
@@ -159,13 +171,19 @@ const Timeline = () => {
               // Calculate the correct final position based on completed events
               if (completedEvents > 0 && events.length > 0) {
                 const eventPositionPercentage = (completedEvents - 0.5) / events.length * 100;
-                progressIndicatorRef.current.style.setProperty('--completed-percent', (eventPositionPercentage / 100).toString());
+                if (progressIndicatorRef.current) {
+                  progressIndicatorRef.current.style.setProperty('--completed-percent', (eventPositionPercentage / 100).toString());
+                }
               } else {
-                progressIndicatorRef.current.style.setProperty('--completed-percent', '0');
+                if (progressIndicatorRef.current) {
+                  progressIndicatorRef.current.style.setProperty('--completed-percent', '0');
+                }
               }
               
               // Add animation class to trigger the slide down effect
-              progressIndicatorRef.current.classList.add('animate-slide-down');
+              if (progressIndicatorRef.current) {
+                progressIndicatorRef.current.classList.add('animate-slide-down');
+              }
               
               // Start checking active events after a short delay
               setTimeout(() => {
