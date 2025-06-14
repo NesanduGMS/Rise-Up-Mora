@@ -1,0 +1,10 @@
+.shine-animation {
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.5) 50%, rgba(255, 255, 255, 0) 100%);
+    background-size: 200% 100%;
+    background-position: right;
+    transition: background-position 0.8s;
+  }
+  
+  .Profile:hover .shine-animation {
+    background-position: left;
+  }

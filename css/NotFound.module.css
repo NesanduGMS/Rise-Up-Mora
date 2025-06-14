@@ -1,0 +1,101 @@
+/* NotFound.module.css */
+.notFound {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f0f0f0;
+}
+
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1200px;
+  width: 90%;
+  padding: 20px;
+  background-color: #fff;
+  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.text {
+  flex: 1;
+  padding: 20px;
+  text-align: center;
+}
+
+.notfound_404{
+  font-size: 5rem;
+  color: #0c2735;
+  animation: fadeInUp 1s ease both;
+}
+
+.fadeInText {
+  font-size: 1.8rem;
+  margin-bottom: 30px;
+  opacity: 0;
+  animation: fadeInUp 1s ease 0.5s both;
+}
+
+/* Text fade-in animation */
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Button styles */
+a.backButton {
+  text-decoration: none;
+  display: inline-block;
+  padding: 12px 24px;
+  background-color: rgb(255, 183, 0);
+  color: #fff;
+  font-weight: bold;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+  margin-top: 30px;
+  font-size: 1.2rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+a.backButton:hover {
+  background-color: #ff4a4a;
+  transform: scale(1.05);
+}
+
+.illustration {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Logo rotation animation */
+@keyframes rotate {
+  0% {
+    transform: rotateY(0deg);
+  }
+  50% {
+    transform: rotateY(180deg);
+  }
+  100% {
+    transform: rotateY(360deg);
+  }
+}
+
+.logo {
+  width: 200px;
+  height: 200px;
+  animation: rotate 4s infinite linear;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+}

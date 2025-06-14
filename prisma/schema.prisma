@@ -1,0 +1,196 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  email                    String                @unique
+  createdAt                DateTime?             @default(now())
+  updatedAt                DateTime?             @updatedAt
+  emailVerified            DateTime?
+  id                       String                @id @default(cuid())
+  image                    String?
+  name                     String?
+  emailVerifyStatus        Boolean               @default(false)
+  password                 String?
+  passwordResetToken       String?               @default("")
+  passwordResetTokenExpire DateTime              @default(now())
+  role                     String?
+  accounts                 Account[]
+  admin                    Admin?
+  Authenticator            Authenticator[]
+  candidate                Candidate?
+  company_cordnator        CompanyCordinator?
+  department_cordnator     DepartmentCordinator?
+  panelist                 Panelist?
+  sessions                 Session[]
+}
+
+model Candidate {
+  candidate_id     String       @unique
+  firstName        String?
+  lastName         String?
+  nameWithInitials String?
+  universityID     String?      @unique
+  contactNo        String?
+  department       String?
+  degree           String?
+  cvUrl            String?
+  imgUrl           String?
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+  prefCompany1     String?
+  prefCompany2     String?
+  prefCompany3     String?
+  prefCompany4     String?
+  allocation       Allocation[]
+  user             User         @relation(fields: [candidate_id], references: [id], onDelete: Cascade)
+  feedback         Feedback[]
+}
+
+model CompanyCordinator {
+  cordinator_id String    @unique
+  company_id    String    @unique
+  createdAt     DateTime? @default(now())
+  updatedAt     DateTime? @updatedAt
+  company       Company   @relation(fields: [company_id], references: [company_id], onDelete: Cascade)
+  user          User      @relation(fields: [cordinator_id], references: [id], onDelete: Cascade)
+}
+
+model DepartmentCordinator {
+  cordinator_id String     @unique
+  department    Department
+  createdAt     DateTime?  @default(now())
+  updatedAt     DateTime?  @updatedAt
+  user          User       @relation(fields: [cordinator_id], references: [id], onDelete: Cascade)
+}
+
+model Panelist {
+  panelist_id   String       @unique
+  pannel_number Int?
+  company_id    String
+  createdAt     DateTime?    @default(now())
+  updatedAt     DateTime?    @updatedAt
+  allocation    Allocation[]
+  company       Company      @relation(fields: [company_id], references: [company_id], onDelete: Cascade)
+  user          User         @relation(fields: [panelist_id], references: [id], onDelete: Cascade)
+
+  @@unique([pannel_number, company_id])
+}
+
+model Admin {
+  admin_id  String    @unique
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @updatedAt
+  user      User      @relation(fields: [admin_id], references: [id], onDelete: Cascade)
+}
+
+model Company {
+  company_id        String             @id @default(cuid())
+  company_name      String
+  company_logo      String?
+  allocation        Allocation[]
+  CompanyCordinator CompanyCordinator?
+  feedback          Feedback[]
+  panalist          Panelist[]
+}
+
+model Feedback {
+  feedback_id          String    @id @default(cuid())
+  feedback             String
+  candidate_id         String
+  company_id           String
+  communicationSkill   Int
+  experienceAndProject Int
+  problemSolvingSkill  Int
+  technicalSkill       Int
+  candidate            Candidate @relation(fields: [candidate_id], references: [candidate_id], onDelete: Cascade)
+  company              Company   @relation(fields: [company_id], references: [company_id], onDelete: Cascade)
+}
+
+model Allocation {
+  allocation_id          String    @id @default(cuid())
+  allocation_date        String?
+  allocation_timeSlot    String?
+  allocated_panel_number Int?
+  attendance             Boolean   @default(false)
+  allocation_status      String?   @default("pending")
+  candidate_id           String
+  company_id             String
+  panelist_id            String
+  candidate              Candidate @relation(fields: [candidate_id], references: [candidate_id], onDelete: Cascade)
+  company                Company   @relation(fields: [company_id], references: [company_id], onDelete: Cascade)
+  panelist               Panelist  @relation(fields: [panelist_id], references: [panelist_id], onDelete: Cascade)
+
+  @@unique([allocated_panel_number,  candidate_id, company_id])
+}
+
+model Account {
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  createdAt         DateTime? @default(now())
+  updatedAt         DateTime? @updatedAt
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
+}
+
+model Session {
+  sessionToken String    @unique
+  userId       String
+  expires      DateTime
+  createdAt    DateTime? @default(now())
+  updatedAt    DateTime? @updatedAt
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@id([identifier, token])
+}
+
+model Authenticator {
+  credentialID         String  @unique
+  userId               String
+  providerAccountId    String
+  credentialPublicKey  String
+  counter              Int
+  credentialDeviceType String
+  credentialBackedUp   Boolean
+  transports           String?
+  user                 User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, credentialID])
+}
+
+enum Department {
+  Electronic_and_Telecommunication_Engineering
+  Electrical_Engineering
+  Mechanical_Engineering
+  Civil_Engineering
+  Material_Science_and_Engineering
+  Chemical_and_Process_Engineering
+  Transport_Management_and_Logistics_Engineering
+  Textile_and_Apparel_Engineering
+  Earth_Resources_Engineering
+  Computer_Science_and_Engineering
+  Information_Technology
+  Interdisciplinary_Studies
+  Computational_Mathematics
+}
