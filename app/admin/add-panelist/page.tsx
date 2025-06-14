@@ -1,15 +1,15 @@
 "use client";
 
+import React, { useEffect, useState } from "react";
+import { useForm, SubmitHandler } from "react-hook-form";
+import { useSession } from "next-auth/react";
+import toast from "react-hot-toast";
+
 import PageLoader from "@/components/PageLoader";
 import { useGetUserData } from "@/hooks/user/useGetUserData";
-import { useSession } from "next-auth/react";
-import React, { useEffect, useState } from "react";
-import { useForm, SubmitHandler, set } from "react-hook-form";
-import toast from "react-hot-toast";
 
 const Page = () => {
   const [errorMessage, setErrorMessage] = useState("");
-
   const [updatedCompanyList, setUpdatedCompanyList] = useState<
     { company_id: number; company_name: string }[]
   >([]);
@@ -25,22 +25,24 @@ const Page = () => {
   const {
     register,
     handleSubmit,
-    watch,
     formState: { errors },
-    reset
+    reset,
   } = useForm<Inputs>();
 
   const { data: session, status } = useSession();
-
-  const userEmail = session?.user?.email;
-  const userData = useGetUserData({ userEmail: userEmail || "" });
+  const userEmail = session?.user?.email || "";
+  const userData = useGetUserData({ userEmail });
   const role = userData.user?.role;
 
   useEffect(() => {
     const fetchCompanyData = async () => {
-      const response = await fetch(`/api/v1/company/getAllCompany`);
-      const responseData = await response.json();
-      setUpdatedCompanyList(responseData.companies);
+      try {
+        const response = await fetch(`/api/v1/company/getAllCompany`);
+        const responseData = await response.json();
+        setUpdatedCompanyList(responseData.companies);
+      } catch (error) {
+        console.error("Failed to fetch companies", error);
+      }
     };
 
     fetchCompanyData();
@@ -51,9 +53,7 @@ const Page = () => {
       new Promise<void>((resolve, reject) => {
         fetch("/api/v1/admin/addPanelist", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(data),
         })
           .then((res) => {
@@ -63,12 +63,13 @@ const Page = () => {
               reset();
             } else {
               res.json().then((data) => {
-                setErrorMessage(data.message);
+                setErrorMessage(data.message || "Failed to add panelist");
                 reject();
               });
             }
           })
           .catch((error) => {
+            setErrorMessage("Network error");
             reject(error);
           });
       }),
@@ -80,7 +81,11 @@ const Page = () => {
     );
   };
 
-  if (userData.user?.role !== "admin") {
+  if (userData.isPending || status === "loading") {
+    return <PageLoader />;
+  }
+
+  if (role !== "admin") {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gray-200">
         <div className="max-w-md w-full text-center bg-white p-6 rounded-lg shadow-md">
@@ -91,10 +96,6 @@ const Page = () => {
         </div>
       </div>
     );
-  }
-
-  if (status === "loading" || userData.isPending) {
-    return <PageLoader />;
   }
 
   return (
@@ -113,7 +114,9 @@ const Page = () => {
         <form
           onSubmit={handleSubmit(onSubmit)}
           className="space-y-4 sm:space-y-6"
+          noValidate
         >
+          {/* Panelist Name */}
           <div className="flex flex-col sm:flex-row items-center sm:space-x-11 space-y-2 sm:space-y-0">
             <label
               htmlFor="panelistName"
@@ -123,7 +126,7 @@ const Page = () => {
             </label>
             <input
               {...register("panelistName", {
-                required: { value: true, message: "panelist Name is required" },
+                required: { value: true, message: "Panelist Name is required" },
               })}
               id="panelistName"
               type="text"
@@ -132,6 +135,7 @@ const Page = () => {
             />
           </div>
 
+          {/* Panelist Company */}
           <div className="flex flex-col sm:flex-row items-center sm:space-x-11 space-y-2 sm:space-y-0">
             <label
               htmlFor="comName"
@@ -141,13 +145,11 @@ const Page = () => {
             </label>
             <select
               {...register("comId", {
-                required: {
-                  value: true,
-                  message: "panelist company name is required",
-                },
+                required: { value: true, message: "Panelist Company is required" },
               })}
               id="comName"
               className="w-full sm:flex-grow px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+              defaultValue=""
             >
               <option value="">-- Select a Company --</option>
               {updatedCompanyList.map((company) => (
@@ -158,6 +160,7 @@ const Page = () => {
             </select>
           </div>
 
+          {/* Panel Number */}
           <div className="flex flex-col sm:flex-row items-center sm:space-x-11 space-y-2 sm:space-y-0">
             <label
               htmlFor="panelNumber"
@@ -167,7 +170,7 @@ const Page = () => {
             </label>
             <input
               {...register("panelNumber", {
-                required: { value: true, message: "panel Number is required" },
+                required: { value: true, message: "Panel Number is required" },
               })}
               id="panelNumber"
               type="text"
@@ -176,7 +179,7 @@ const Page = () => {
             />
           </div>
 
-          {/* Email Input */}
+          {/* Email */}
           <div className="flex flex-col sm:flex-row items-center sm:space-x-11 space-y-2 sm:space-y-0">
             <label
               htmlFor="email"
@@ -199,7 +202,7 @@ const Page = () => {
             />
           </div>
 
-          {/* Password Input */}
+          {/* Password */}
           <div className="flex flex-col sm:flex-row items-center sm:space-x-11 space-y-2 sm:space-y-0">
             <label
               htmlFor="password"
@@ -209,12 +212,15 @@ const Page = () => {
             </label>
             <input
               {...register("password", {
-                required: true,
+                required: "Password is required",
                 minLength: {
                   value: 6,
-                  message: "password must be atleast 6 characters ",
+                  message: "Password must be at least 6 characters",
                 },
-                maxLength: 20,
+                maxLength: {
+                  value: 20,
+                  message: "Password must be less than 20 characters",
+                },
               })}
               id="password"
               type="password"
@@ -223,7 +229,8 @@ const Page = () => {
             />
           </div>
 
-          <div className=" mb-4 text-red-500">
+          {/* Error message display */}
+          <div className="mb-4 text-red-500">
             <p>
               {errors.panelistName?.message ||
                 errors.comId?.message ||
@@ -234,6 +241,7 @@ const Page = () => {
             </p>
           </div>
 
+          {/* Submit Button */}
           <div className="flex justify-end">
             <button
               type="submit"
@@ -247,4 +255,5 @@ const Page = () => {
     </div>
   );
 };
+
 export default Page;

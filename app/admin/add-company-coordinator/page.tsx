@@ -3,37 +3,34 @@
 import PageLoader from "@/components/PageLoader";
 import { useGetUserData } from "@/hooks/user/useGetUserData";
 import { useSession } from "next-auth/react";
-import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import toast from "react-hot-toast";
 
-export default function Page() {
+type Company = { company_id: number; company_name: string };
+
+type Inputs = {
+  coordinatorName: string;
+  companyId: string;
+  email: string;
+  password: string;
+};
+
+export default function Page(): JSX.Element {
   const { data: session, status } = useSession();
 
-  const userEmail = session?.user?.email;
-  const userData = useGetUserData({ userEmail: userEmail || "" });
+  const userEmail = session?.user?.email || "";
+  const userData = useGetUserData({ userEmail });
   const role = userData.user?.role;
 
-  const [updatedCompanyList, setUpdatedCompanyList] = useState<
-    { company_id: number; company_name: string }[]
-  >([]);
-
+  const [updatedCompanyList, setUpdatedCompanyList] = useState<Company[]>([]);
   const [errorMessage, setErrorMessage] = useState("");
-
-  type Inputs = {
-    coordinatorName: string;
-    companyId: string;
-    email: string;
-    password: string;
-  };
 
   const {
     register,
     handleSubmit,
-    watch,
     formState: { errors },
-    reset
+    reset,
   } = useForm<Inputs>();
 
   useEffect(() => {
@@ -80,7 +77,7 @@ export default function Page() {
     );
   };
 
-  if (userData.user?.role !== "admin") {
+  if (role !== "admin") {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gray-200">
         <div className="max-w-md w-full text-center bg-white p-6 rounded-lg shadow-md">
@@ -110,10 +107,7 @@ export default function Page() {
         </div>
       </div>
       <div className="bg-white rounded-lg p-5 sm:p-10 max-w-lg w-full sm:max-w-2xl">
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="space-y-4 sm:space-y-6"
-        >
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 sm:space-y-6">
           <div className="flex flex-col sm:flex-row items-center sm:space-x-11 space-y-2 sm:space-y-0">
             <label
               htmlFor="coordinatorName"
@@ -133,22 +127,19 @@ export default function Page() {
           </div>
 
           <div className="flex flex-col sm:flex-row items-center sm:space-x-11 space-y-2 sm:space-y-0">
-            <label
-              htmlFor="companyName"
-              className="text-lg font-bold text-black min-w-[150px]"
-            >
+            <label htmlFor="companyName" className="text-lg font-bold text-black min-w-[150px]">
               Company Name
             </label>
             <select
               {...register("companyId", {
-                required: { value: true, message: "company Name is required" },
+                required: { value: true, message: "Company Name is required" },
               })}
               id="companyName"
               className="w-full sm:flex-grow px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
             >
               <option value="">-- Select a Company --</option>
               {updatedCompanyList.map((company) => (
-                <option key={company.company_id} value={company.company_id}>
+                <option key={company.company_id} value={company.company_id.toString()}>
                   {company.company_name}
                 </option>
               ))}
@@ -156,10 +147,7 @@ export default function Page() {
           </div>
 
           <div className="flex flex-col sm:flex-row items-center sm:space-x-11 space-y-2 sm:space-y-0">
-            <label
-              htmlFor="email"
-              className="text-lg font-bold text-black min-w-[150px]"
-            >
+            <label htmlFor="email" className="text-lg font-bold text-black min-w-[150px]">
               Email
             </label>
             <input
@@ -178,10 +166,7 @@ export default function Page() {
           </div>
 
           <div className="flex flex-col sm:flex-row items-center sm:space-x-11 space-y-2 sm:space-y-0">
-            <label
-              htmlFor="password"
-              className="text-lg font-bold text-black min-w-[150px]"
-            >
+            <label htmlFor="password" className="text-lg font-bold text-black min-w-[150px]">
               Password
             </label>
             <input
@@ -189,7 +174,7 @@ export default function Page() {
                 required: true,
                 minLength: {
                   value: 6,
-                  message: "password must be atleast 6 characters ",
+                  message: "Password must be at least 6 characters",
                 },
                 maxLength: 20,
               })}
@@ -199,7 +184,7 @@ export default function Page() {
               placeholder="Password"
             />
           </div>
-          <div className=" mb-4 text-red-500">
+          <div className="mb-4 text-red-500">
             <p>
               {errors.coordinatorName?.message ||
                 errors.companyId?.message ||
