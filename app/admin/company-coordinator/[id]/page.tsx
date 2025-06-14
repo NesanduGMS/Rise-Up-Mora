@@ -9,12 +9,6 @@ import { notFound } from "next/navigation";
 import { getAllPanelistForOneCompany } from "@/service/getAllPanelistForOneCompany";
 import { getCompanyAllocatin } from "@/service/getCompanyAllocatin";
 
-interface PageProps {
-  params: {
-    id: string;
-  };
-}
-
 interface AllocationType {
   allocation_id: string;
   allocation_date: string;
@@ -43,21 +37,22 @@ interface AllocationType {
   };
 }
 
-const CompanyCoordinator = async ({ params }: PageProps) => {
+export default async function CompanyCoordinator({
+  params,
+}: {
+  params: { id: string };
+}) {
   const companyCoordinatorId = params.id;
 
-  // Fetch user by id and check role
   const user = await getUserById({ userId: companyCoordinatorId });
   if (!user || user.role !== "companyCoordinator") {
     notFound();
   }
 
-  // Extract company info from user
   const compnanyCoordinatorCompanyName =
     user.company_cordnator.company.company_name;
   const compnanyCoordinatorCompanyId = user.company_cordnator.company_id;
 
-  // Fetch related data
   const companyResponse = await getCompany();
   const feedbackResponse = await getFeedback();
   const allAllocationResponse = await getAllocation();
@@ -68,25 +63,21 @@ const CompanyCoordinator = async ({ params }: PageProps) => {
     compnanyCoordinatorCompanyId
   );
 
-  // Map candidates from allocationCandidate
   const allCandidatesDetails: Candidate[] = allocationCandidate.map(
     (allocation) => allocation.candidate
   );
 
-  // Filter allocations only for this company
   const filterAllocation: Allocation[] =
     allAllocationResponse?.data?.filter(
       (allocation: Allocation) =>
         allocation.company_id === compnanyCoordinatorCompanyId
     ) || [];
 
-  // Initialize data containers
   let feedback: Feedback[] = [];
   let company: Company[] = [];
   let allocation: Allocation[] = filterAllocation;
   let allPanelists: Panelist[] = [];
 
-  // Validate responses and assign
   if (feedbackResponse?.data) {
     feedback = feedbackResponse.data;
   } else {
@@ -109,7 +100,6 @@ const CompanyCoordinator = async ({ params }: PageProps) => {
     throw new Error("Failed to fetch panelists");
   }
 
-  // Render the component with fetched and filtered data
   return (
     <AllInterviewers
       compnanyCoordinatorCompanyName={compnanyCoordinatorCompanyName}
@@ -120,6 +110,4 @@ const CompanyCoordinator = async ({ params }: PageProps) => {
       allPanelists={allPanelists}
     />
   );
-};
-
-export default CompanyCoordinator;
+}
