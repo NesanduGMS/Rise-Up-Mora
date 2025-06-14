@@ -9,11 +9,11 @@ import { notFound } from "next/navigation";
 import { getAllPanelistForOneCompany } from "@/service/getAllPanelistForOneCompany";
 import { getCompanyAllocatin } from "@/service/getCompanyAllocatin";
 
-type Params = {
+interface PageProps {
   params: {
     id: string;
   };
-};
+}
 
 interface AllocationType {
   allocation_id: string;
@@ -43,7 +43,7 @@ interface AllocationType {
   };
 }
 
-const CompanyCoordinator = async ({ params }: Params) => {
+const CompanyCoordinator = async ({ params }: PageProps) => {
   const companyCoordinatorId = params.id;
 
   // Fetch user by id and check role
