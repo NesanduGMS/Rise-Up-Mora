@@ -44,15 +44,18 @@ export default async function CompanyCoordinator({
 }) {
   const companyCoordinatorId = params.id;
 
+  // Fetch user by id and check role
   const user = await getUserById({ userId: companyCoordinatorId });
   if (!user || user.role !== "companyCoordinator") {
     notFound();
   }
 
+  // Extract company info from user
   const compnanyCoordinatorCompanyName =
     user.company_cordnator.company.company_name;
   const compnanyCoordinatorCompanyId = user.company_cordnator.company_id;
 
+  // Fetch related data
   const companyResponse = await getCompany();
   const feedbackResponse = await getFeedback();
   const allAllocationResponse = await getAllocation();
@@ -63,21 +66,25 @@ export default async function CompanyCoordinator({
     compnanyCoordinatorCompanyId
   );
 
+  // Map candidates from allocationCandidate
   const allCandidatesDetails: Candidate[] = allocationCandidate.map(
     (allocation) => allocation.candidate
   );
 
+  // Filter allocations only for this company
   const filterAllocation: Allocation[] =
     allAllocationResponse?.data?.filter(
       (allocation: Allocation) =>
         allocation.company_id === compnanyCoordinatorCompanyId
     ) || [];
 
+  // Initialize data containers
   let feedback: Feedback[] = [];
   let company: Company[] = [];
   let allocation: Allocation[] = filterAllocation;
   let allPanelists: Panelist[] = [];
 
+  // Validate responses and assign
   if (feedbackResponse?.data) {
     feedback = feedbackResponse.data;
   } else {
@@ -100,6 +107,7 @@ export default async function CompanyCoordinator({
     throw new Error("Failed to fetch panelists");
   }
 
+  // Render the component with fetched and filtered data
   return (
     <AllInterviewers
       compnanyCoordinatorCompanyName={compnanyCoordinatorCompanyName}
