@@ -37,11 +37,13 @@ interface AllocationType {
   };
 }
 
-export default async function CompanyCoordinator({
-  params,
-}: {
-  params: { id: string };
-}) {
+interface PageProps {
+  params: {
+    id: string;
+  };
+}
+
+export default async function CompanyCoordinator({ params }: PageProps) {
   const companyCoordinatorId = params.id;
 
   // Fetch user by id and check role
