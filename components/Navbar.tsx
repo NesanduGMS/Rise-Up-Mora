@@ -1,19 +1,35 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, RefObject, useMemo } from 'react';
 import { Menu, X } from 'lucide-react';
 import NextLink from 'next/link'; // Renamed to NextLink to avoid conflict if 'Link' is used as a variable
 import { useRouter } from 'next/navigation';
-import logo from '../assets/logo.webp'; // Assuming assets folder is one level up from components
-import logo2 from '../assets/logo2.png'; // Assuming assets folder is one level up from components
+import Image from 'next/image';
 
-const Navbar = () => {
+interface SectionRefs {
+  heroSectionRef: RefObject<HTMLDivElement>;
+  aboutRef: RefObject<HTMLDivElement>;
+  timelineRef: RefObject<HTMLDivElement>;
+  contactUsRef: RefObject<HTMLDivElement>;
+}
+
+interface NavbarProps {
+  sectionRefs?: SectionRefs;
+}
+
+const Navbar = ({ sectionRefs }: NavbarProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
+  const [mounted, setMounted] = useState(false);
   const router = useRouter();
 
-  const navItems = ['home', 'about', 'timeline', 'partners', 'gallery', 'contact']; // Added 'gallery'
+  const navItems = useMemo(() => ['home', 'about', 'timeline', 'partners', 'gallery', 'contact'], []);
 
   useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
     const handleScroll = () => {
       if (window.scrollY > 50) {
         setScrolled(true);
@@ -55,16 +71,40 @@ const Navbar = () => {
     window.addEventListener('scroll', handleScroll);
     handleScroll(); // Initial check
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [activeSection, navItems]); // Dependencies are correct
+  }, [mounted, activeSection, navItems]); // Added mounted dependency
 
   const scrollToSection = (sectionId: string) => {
-    const section = document.getElementById(sectionId);
-    if (section) {
+    let targetElement: HTMLElement | null = null;
+    
+    // Try to use refs first if available
+    if (sectionRefs) {
+      switch (sectionId) {
+        case 'home':
+          targetElement = sectionRefs.heroSectionRef.current;
+          break;
+        case 'about':
+          targetElement = sectionRefs.aboutRef.current;
+          break;
+        case 'timeline':
+          targetElement = sectionRefs.timelineRef.current;
+          break;
+        case 'contact':
+          targetElement = sectionRefs.contactUsRef.current;
+          break;
+      }
+    }
+    
+    // Fallback to getElementById if refs are not available or ref is null
+    if (!targetElement) {
+      targetElement = document.getElementById(sectionId);
+    }
+    
+    if (targetElement) {
       // Dynamically get navbar height if possible, otherwise fallback to 80
       const navElement = document.querySelector('nav');
       const navHeight = navElement ? navElement.offsetHeight : 80;
       window.scrollTo({
-        top: section.offsetTop - navHeight,
+        top: targetElement.offsetTop - navHeight,
         behavior: 'smooth'
       });
     }
@@ -73,8 +113,64 @@ const Navbar = () => {
   };
 
   const handleSignInClick = () => {
-    router.push('/auth/signin'); // Adjusted for Next.js and common auth path
+    if (mounted) {
+      router.push('/auth/signin'); // Adjusted for Next.js and common auth path
+    }
   };
+
+  // Prevent hydration mismatch by not rendering dynamic content until mounted
+  if (!mounted) {
+    return (
+      <nav className="fixed w-full z-50 transition-all duration-300 py-6">
+        <div className="absolute inset-0 bg-transparent transition-all duration-300"></div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="flex justify-between items-center">
+            <NextLink href="/" passHref legacyBehavior>
+              <a onClick={() => scrollToSection('home')} className="flex items-center cursor-pointer">
+                <Image
+                  src="/images/navbar-logo-large.png"
+                  alt="Rise Up Mora Logo"
+                  width={40}
+                  height={40}
+                  className="h-10 w-auto transition-all duration-300"
+                />
+                <span className="ml-2 text-2xl font-bold transition-colors duration-300 logo-text text-white">
+                  Rise Up <span className="font-black">Mora</span>
+                </span>
+              </a>
+            </NextLink>
+            
+            <div className="hidden md:flex items-center space-x-1">
+              {navItems.map((item) => (
+                <a 
+                  key={item}
+                  onClick={() => scrollToSection(item)}
+                  className="relative px-4 py-3 mx-1 font-medium uppercase text-sm tracking-wider cursor-pointer transition-all duration-300 nav-link text-white hover:text-gray-200"
+                >
+                  {item}
+                </a>
+              ))}
+              <button
+                onClick={handleSignInClick}
+                className="bg-gold text-dark-blue px-6 py-2 rounded-lg font-semibold hover:bg-yellow-400 transition-all duration-300 ml-4"
+              >
+                Sign In
+              </button>
+            </div>
+
+            <div className="md:hidden">
+              <button
+                onClick={() => setIsOpen(!isOpen)}
+                className="text-white focus:outline-none focus:text-gray-300 transition-colors duration-300"
+              >
+                {isOpen ? <X size={24} /> : <Menu size={24} />}
+              </button>
+            </div>
+          </div>
+        </div>
+      </nav>
+    );
+  }
 
   return (
     <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'py-4 scrolled-nav' : 'py-6'}`}>
@@ -88,9 +184,11 @@ const Navbar = () => {
         <div className="flex justify-between items-center">
           <NextLink href="/" passHref legacyBehavior>
             <a onClick={() => scrollToSection('home')} className="flex items-center cursor-pointer">
-              <img
-                src={scrolled ? logo2.src : logo.src} // Use .src if images are imported as modules
+              <Image
+                src={scrolled ? "/images/logo.png" : "/images/navbar-logo-large.png"}
                 alt="Rise Up Mora Logo"
+                width={40}
+                height={40}
                 className="h-10 w-auto transition-all duration-300"
               />
               <span

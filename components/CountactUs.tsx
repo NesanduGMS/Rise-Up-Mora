@@ -18,7 +18,7 @@ interface ContactCardProps {
   category: 'chair' | 'event';
 }
 
-const ContactCard = memo(({ name, role, organization, email, phone, image, social, index, category }: ContactCardProps) => {
+const ContactCard = memo(function ContactCard({ name, role, organization, email, phone, image, social, index, category }: ContactCardProps) {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
@@ -351,7 +351,7 @@ const EnhancedContact = () => {
             }}
           >
             Have questions about IEEE Student Branch events or want to join our community?
-            We're always excited to hear from fellow tech enthusiasts and future engineers!
+            We&apos;re always excited to hear from fellow tech enthusiasts and future engineers!
           </p>
         </div>
 

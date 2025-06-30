@@ -1,5 +1,4 @@
 "use client";
-
 import CloudinaryUpload from "@/components/cloudinaryWidget";
 import { useAddCompany } from "@/hooks/company/useAddCompany";
 import { useGetAllCompany } from "@/hooks/company/useGetAllCompany";
@@ -9,15 +8,8 @@ import Image from "next/image";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 
-type CompanyType = {
-  company_id: number | string;
-  company_name: string;
-  company_logo: string;
-};
-
 const Page = () => {
   const { data: session, status } = useSession();
-
   const [companyIcone, setCompanyIcone] = useState<string>("");
   const [companyName, setCompanyName] = useState<string>("");
   const [companyId, setCompanyId] = useState<string>("");
@@ -41,13 +33,32 @@ const Page = () => {
     );
   }
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  // if (isPending) {
+  //   return;
+  // }
 
-    if (!companyName || !companyId || !companyIcone) {
-      toast.error("Please fill all fields.");
-      return;
-    }
+  // const [companies, setCompanies] = useState([
+  //   { id: "1", name: "Company A", logo: "https://via.placeholder.com/50" },
+  //   { id: "2", name: "Company B", logo: "https://via.placeholder.com/50" },
+  //   { id: "3", name: "Company C", logo: "https://via.placeholder.com/50" },
+  // ]);
+
+  // const [newCompany, setNewCompany] = useState({
+  //   id: "",
+  //   name: "",
+  //   logo: "",
+  // });
+
+  // const handleInputChange = (e: { target: { name: any; value: any } }) => {
+  //   const { name, value } = e.target;
+  //   setNewCompany({
+  //     ...newCompany,
+  //     [name]: value,
+  //   });
+  // };
+
+  const handleSubmit = (e: { preventDefault: () => void }) => {
+    e.preventDefault();
 
     addNewCompany(
       { companyName, companyId, companyIcone },
@@ -59,7 +70,7 @@ const Page = () => {
           toast.success("Company added successfully");
         },
         onError: (e) => {
-          console.error(e);
+          console.log(e);
           toast.error("Failed to add company");
         },
       }
@@ -68,14 +79,13 @@ const Page = () => {
 
   return (
     <div className="flex flex-col lg:flex-row h-screen">
-      {/* Company List */}
-      <div className="lg:w-1/2 p-4 order-2 lg:order-2">
+      <div className="lg:w-1/2 p-4  order-2 lg:order-2">
         <h2 className="text-l lg:text-2xl font-poppins mb-4 flex justify-center">
           Company List
         </h2>
 
         {isPending ? (
-          <div className="flex justify-center items-center mt-10">
+          <div className="flex justify-center  items-center mt-10">
             <Image
               src="/spinner/loading-black.svg"
               width={50}
@@ -99,15 +109,15 @@ const Page = () => {
               </tr>
             </thead>
             <tbody>
-              {company?.companies?.map((company: CompanyType, index: number) => (
+              {company.companies.map((company: any, index: any) => (
                 <tr key={index}>
-                  <td className="px-4 lg:px-6 py-2 lg:py-4 whitespace-nowrap border-b border-gray-500 font-poppins">
+                  <td className="px-4 lg:px-6 py-2 lg:py-4 whitespace-no-wrap border-b border-gray-500 font-poppins">
                     {company.company_id}
                   </td>
-                  <td className="px-4 lg:px-6 py-2 lg:py-4 whitespace-nowrap border-b border-gray-500 font-poppins">
+                  <td className="px-4 lg:px-6 py-2 lg:py-4 whitespace-no-wrap border-b border-gray-500 font-poppins">
                     {company.company_name}
                   </td>
-                  <td className="px-4 lg:px-6 py-2 lg:py-4 whitespace-nowrap border-b border-gray-500 font-poppins">
+                  <td className="px-4 lg:px-6 py-2 lg:py-4 whitespace-no-wrap border-b border-gray-500 font-poppins">
                     <img
                       src={company.company_logo}
                       alt={company.company_name}
@@ -119,9 +129,9 @@ const Page = () => {
             </tbody>
           </table>
         )}
+        {/*  */}
+        {/* */}
       </div>
-
-      {/* Add Company Form */}
       <div className="lg:w-1/2 p-4 order-1 lg:order-1 px-14">
         <h2 className="text-xl lg:text-2xl font-poppins mb-4 flex justify-center">
           Add New Company
@@ -138,7 +148,6 @@ const Page = () => {
               onChange={(e) => setCompanyName(e.target.value)}
               className="mt-1 block w-full px-3 py-2 lg:py-3 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               placeholder="Enter Company Name"
-              required
             />
           </div>
           <div>
@@ -152,11 +161,10 @@ const Page = () => {
               onChange={(e) => setCompanyId(e.target.value)}
               className="mt-1 block w-full px-3 py-2 lg:py-3 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               placeholder="Enter Company ID"
-              required
             />
           </div>
           <div>
-            <label className="block text-sm lg:text-base font-poppins text-gray-700 mb-1">
+            <label className="block text-sm lg:text-base font-poppins text-gray-700">
               Company Logo URL
             </label>
             <CloudinaryUpload
@@ -164,21 +172,22 @@ const Page = () => {
               type={"image"}
               croping={false}
             />
-            {companyIcone && (
-              <img
-                src={companyIcone}
-                alt="Company Logo Preview"
-                className="mt-2 w-20 h-20 object-contain border rounded"
-              />
-            )}
+
+            {/* <input
+              type="text"
+              name="logo"
+              value={newCompany.logo}
+              onChange={handleInputChange}
+              className="mt-1 block w-full px-3 py-2 lg:py-3 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              placeholder="Enter Logo URL"
+            /> */}
           </div>
           <div className="flex justify-center">
             <button
               type="submit"
               className="w-100px px-4 py-2 lg:px-6 lg:py-3 bg-[#0c2735] hover:text-[#0c2735] text-white font-poppins rounded-lg shadow-sm hover:bg-[#f1c232]"
-              disabled={isUpdating}
             >
-              {isUpdating ? "Submitting..." : "Submit"}
+              Submit
             </button>
           </div>
         </form>

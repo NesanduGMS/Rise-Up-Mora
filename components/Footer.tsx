@@ -47,9 +47,9 @@ const Footer = () => {
   ];
 
   const upcomingEvents = [
-    {icon: Calendar, title: 'Tech Workshop', date: 'July 15, 2025 • 10:00 AM'}, // Updated date
-    {icon: Calendar, title: 'Hackathon 2025', date: 'August 5-7, 2025 • All day'}, // Updated date
-    {icon: Users, title: 'IEEE Annual Meetup', date: 'August 20, 2025 • 4:00 PM'} // Updated date & title
+    {icon: Calendar, title: 'Registrations Opening', date: 'July 17th, 2025 • 6:00 PM'}, // Updated date
+    {icon: Calendar, title: 'Registrations Closing', date: 'July 29th, 2025 • 5:00 PM'}, // Updated date
+    {icon: Users, title: 'Internship & Mock Interview Fair', date: '31st July 2025 • 5:00 PM'} // Updated date & title
   ];
   
   return (

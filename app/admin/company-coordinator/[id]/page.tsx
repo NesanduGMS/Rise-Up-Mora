@@ -3,11 +3,19 @@ import { Allocation, Candidate, Company, Feedback, Panelist } from "@/Type";
 import AllInterviewers from "./components/allInterviewers";
 import { getFeedback } from "@/service/getFeedback";
 import { getCompany } from "@/service/getCompany";
+import { InterviewAllocation } from "@/service/InterviewAllocation";
 import { getAllocation } from "@/service/getInterviewAllocation";
 import { getUserById } from "@/service/getUserById";
 import { notFound } from "next/navigation";
+import { all } from "axios";
 import { getAllPanelistForOneCompany } from "@/service/getAllPanelistForOneCompany";
 import { getCompanyAllocatin } from "@/service/getCompanyAllocatin";
+
+type Paramms = {
+  params: {
+    id: string;
+  };
+};
 
 interface AllocationType {
   allocation_id: string;
@@ -19,7 +27,23 @@ interface AllocationType {
   candidate_id: string;
   company_id: string;
   panelist_id: string;
-  candidate: Candidate & {
+  candidate: {
+    candidate_id: string;
+    firstName: string;
+    lastName: string;
+    nameWithInitials: string;
+    universityID: string;
+    contactNo: string;
+    department: string;
+    degree: string;
+    cvUrl: string;
+    imgUrl: string;
+    createdAt: string;
+    updatedAt: string;
+    prefCompany1: string | null;
+    prefCompany2: string | null;
+    prefCompany3: string | null;
+    prefCompany4: string | null;
     user: {
       email: string;
       createdAt: string;
@@ -37,87 +61,109 @@ interface AllocationType {
   };
 }
 
-interface PageProps {
-  params: {
-    id: string;
-  };
-}
-
-export default async function CompanyCoordinator({ params }: PageProps) {
+const CompanyCoordinator = async ({ params }: Paramms) => {
+  // get company coordinator id from params
   const companyCoordinatorId = params.id;
 
-  // Fetch user by id and check role
+  // get company coordinator details
   const user = await getUserById({ userId: companyCoordinatorId });
-  if (!user || user.role !== "companyCoordinator") {
+
+  // if that user is not a company coordinator, return 404
+  if (user == null || user.role !== "companyCoordinator") {
     notFound();
   }
 
-  // Extract company info from user
+  // get company name of the company coordinator
   const compnanyCoordinatorCompanyName =
     user.company_cordnator.company.company_name;
+
   const compnanyCoordinatorCompanyId = user.company_cordnator.company_id;
 
-  // Fetch related data
-  const companyResponse = await getCompany();
+  /////////////////////////// above code done by ruchith ///////////////////////////
+
+  // const response = await getCandidates();
+  const companyResponce = await getCompany();
   const feedbackResponse = await getFeedback();
-  const allAllocationResponse = await getAllocation();
-  const allPanelistResponse = await getAllPanelistForOneCompany(
+  const allAllocation = await getAllocation();
+  const allPanelist = await getAllPanelistForOneCompany(
     compnanyCoordinatorCompanyId
   );
+
   const allocationCandidate: AllocationType[] = await getCompanyAllocatin(
     compnanyCoordinatorCompanyId
   );
 
-  // Map candidates from allocationCandidate
   const allCandidatesDetails: Candidate[] = allocationCandidate.map(
-    (allocation) => allocation.candidate
+    (allocation: AllocationType) => allocation.candidate
   );
 
-  // Filter allocations only for this company
-  const filterAllocation: Allocation[] =
-    allAllocationResponse?.data?.filter(
-      (allocation: Allocation) =>
-        allocation.company_id === compnanyCoordinatorCompanyId
-    ) || [];
+  // console.log(allCandidatesDetails);
 
-  // Initialize data containers
+  const filterAllocation = allAllocation.data.filter(
+    (allocation: Allocation) =>
+      allocation.company_id === compnanyCoordinatorCompanyId
+  );
+  // console.log(filterAllocation);
+
+  // const filterResponse = response.data.filter(
+  //   (allocation: Allocation) =>
+  //     allocation.company_id === compnanyCoordinatorCompanyId
+  // );
+
+  let initialCandidates: Candidate[] = [];
   let feedback: Feedback[] = [];
   let company: Company[] = [];
-  let allocation: Allocation[] = filterAllocation;
+  let allocation: Allocation[] = filterAllocation?.data || [];
   let allPanelists: Panelist[] = [];
 
-  // Validate responses and assign
-  if (feedbackResponse?.data) {
+  // if (response && response.data) {
+  //   initialCandidates = response.data.filter((candidate: Candidate) =>
+  //     filterAllocation.some(
+  //       (allocation: Allocation) =>
+  //         allocation.candidate_id === candidate.candidate_id
+  //     )
+  //   );
+  // } else {
+  //   throw new Error("Failed to fetch candidates");
+  // }
+
+  // console.log("initialCandidates", initialCandidates);
+
+  if (feedbackResponse && feedbackResponse.data) {
     feedback = feedbackResponse.data;
   } else {
-    throw new Error("Failed to fetch feedback");
+    new Error("Failed to fetch feedback");
   }
 
-  if (companyResponse?.data) {
-    company = companyResponse.data;
+  if (companyResponce && companyResponce.data) {
+    company = companyResponce.data;
   } else {
-    throw new Error("Failed to fetch company");
+    new Error("Failed to fetch company");
   }
-
-  if (!allAllocationResponse?.data) {
-    throw new Error("Failed to fetch allocations");
-  }
-
-  if (allPanelistResponse?.data) {
-    allPanelists = allPanelistResponse.data;
+  if (allAllocation && allAllocation.data) {
+    allocation = allAllocation.data;
   } else {
-    throw new Error("Failed to fetch panelists");
+    new Error("Failed to fetch Allocations");
+  }
+  if (allPanelist && allPanelist.data) {
+    allPanelists = allPanelist.data;
+  } else {
+    new Error("Failed to fetch Panelist");
   }
 
-  // Render the component with fetched and filtered data
+  // console.log("allocation", allocation);
+  // console.log("initialCandidates", initialCandidates);
+
   return (
     <AllInterviewers
       compnanyCoordinatorCompanyName={compnanyCoordinatorCompanyName}
       initialCandidates={allCandidatesDetails}
       feedbacks={feedback}
       company={company}
-      allocation={allocation}
+      allocation={filterAllocation}
       allPanelists={allPanelists}
     />
   );
-}
+};
+
+export default CompanyCoordinator;

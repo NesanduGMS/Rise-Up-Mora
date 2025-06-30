@@ -11,7 +11,6 @@ import { MutableRefObject } from "react";
 import SideNavbar from "./ui/SideNavbar";
 import { useSession, signIn, signOut } from "next-auth/react";
 import Gallery from "./gallery";
-import CanvasCursor from '../components/ui/canvasCursor';
 
 const HomePage = () => {
   const heroSectionRef = useRef<HTMLDivElement>(null);
@@ -31,7 +30,6 @@ const HomePage = () => {
   return (
     <div>
       <Navbar sectionRefs={sectionRefs} />
-      <CanvasCursor />
       <SideNavbar />
       <div className=" fixed bottom-0 bg-custom-yellow w-full z-40 h-4"></div>
       <div ref={heroSectionRef}>

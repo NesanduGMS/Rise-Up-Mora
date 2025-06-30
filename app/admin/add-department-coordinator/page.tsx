@@ -2,41 +2,41 @@
 import PageLoader from "@/components/PageLoader";
 import { useGetUserData } from "@/hooks/user/useGetUserData";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
 import React, { useState } from "react";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useForm, SubmitHandler, set } from "react-hook-form";
 import toast from "react-hot-toast";
 
 export default function Page() {
   const [errorMessage, setErrorMessage] = useState("");
 
   const departmentList = [
-    { dept_name: "Electronic_and_Telecommunication_Engineering", dept_id: 1 },
-    { dept_name: "Electrical_Engineering", dept_id: 2 },
-    { dept_name: "Mechanical_Engineering", dept_id: 3 },
-    { dept_name: "Civil_Engineering", dept_id: 4 },
-    { dept_name: "Material_Science_and_Engineering", dept_id: 5 },
-    { dept_name: "Chemical_and_Process_Engineering", dept_id: 6 },
-    { dept_name: "Transport_Management_and_Logistics_Engineering", dept_id: 7 },
-    { dept_name: "Textile_and_Apparel_Engineering", dept_id: 8 },
-    { dept_name: "Earth_Resources_Engineering", dept_id: 9 },
-    { dept_name: "Computer_Science_and_Engineering", dept_id: 10 },
-    { dept_name: "Information_Technology", dept_id: 11 },
-    { dept_name: "Interdisciplinary_Studies", dept_id: 12 },
-    { dept_name: "Computational_Mathematics", dept_id: 13 },
+    { dept_name: "Electronic_and_Telecommunication_Engineering", dept_id: 1 }, // B.Sc. Eng(Hons) in Civil Engineering
+    { dept_name: "Electrical_Engineering", dept_id: 2 }, // B.Sc. Eng(Hons) in Mechanical Engineering
+    { dept_name: "Mechanical_Engineering", dept_id: 3 }, // B.Sc. Eng(Hons) in Computer Science & Engineering
+    { dept_name: "Civil_Engineering", dept_id: 4 }, // B.Sc. Eng(Hons) in Electrical Engineering
+    { dept_name: "Material_Science_and_Engineering", dept_id: 5 }, // B.Sc. Eng(Hons) in Electronic & Telecommunication Engineering
+    { dept_name: "Chemical_and_Process_Engineering", dept_id: 6 }, // B.Sc. Eng(Hons) in Material Science & Engineering
+    { dept_name: "Transport_Management_and_Logistics_Engineering", dept_id: 7 }, // B.Sc. Eng(Hons) in Chemical & Process Engineering
+    { dept_name: "Textile_and_Apparel_Engineering", dept_id: 8 }, // B.Sc. Eng(Hons) in Textile & Apparel Engineering
+    { dept_name: "Earth_Resources_Engineering", dept_id: 9 }, // B.Sc. Eng(Hons) in Earth Resource Engineering
+    { dept_name: "Computer_Science_and_Engineering", dept_id: 10 }, // Assuming closest match for Bio Medical Engineering
+    { dept_name: "Information_Technology", dept_id: 11 }, // B.Sc. Eng(Hons) in Transport Management & Logistics Engineering
+    { dept_name: "Interdisciplinary_Studies", dept_id: 12 }, // BSc (Hons) in IT
+    { dept_name: "Computational_Mathematics", dept_id: 13 }, // BSc (Hons) in IT & Management
   ];
-
   type Inputs = {
     coordinatorName: string;
     departmentName: string;
     email: string;
     password: string;
   };
-
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
-    reset,
+    reset
   } = useForm<Inputs>();
 
   const { data: session, status } = useSession();
@@ -79,7 +79,7 @@ export default function Page() {
     );
   };
 
-  if (role !== "admin") {
+  if (userData.user?.role !== "admin") {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gray-200">
         <div className="max-w-md w-full text-center bg-white p-6 rounded-lg shadow-md">
@@ -100,16 +100,19 @@ export default function Page() {
     <div className="min-h-screen flex flex-col items-center justify-center relative px-4 sm:px-0">
       <div className="absolute top-0 left-0 m-5 sm:m-10">
         <div className="relative">
-          <div className="absolute bg-[#0c2735] text-white font rounded-[10px] cursor-pointer z-10 py-2 px-4 sm:py-2 sm:px-5 top-4 left-4">
+          <div className="absolute bg-[#0c2735] text-white font rounded-[10px] border-none cursor-pointer z-10 py-2 px-4 sm:py-2 sm:px-5 top-4 left-4">
             <div className="font-poppins text-[20px] sm:text-[30px] md:text-[40px] line-height-1">
               Registration
             </div>
           </div>
-          <div className="absolute top-1 left-0 mt-6 ml-1.5 sm:mt-8 sm:ml-3 bg-[#f1c232] text-[#f1c232] rounded-[10px] py-2 cursor-pointer h-[40px] w-[150px] sm:w-[270px] sm:h-[70px]"></div>
+          <div className="absolute top-1 left-0 mt-6 ml-1.5 sm:mt-8 sm:ml-3 bg-[#f1c232] text-[#f1c232] rounded-[10px] border-none py-2 cursor-pointer h-[40px] w-[150px] sm:w-[270px] sm:h-[70px]"></div>
         </div>
       </div>
       <div className="bg-white rounded-lg p-5 sm:p-10 max-w-lg w-full sm:max-w-2xl">
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 sm:space-y-6">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="space-y-4 sm:space-y-6"
+        >
           <div className="flex flex-col sm:flex-row items-center sm:space-x-11 space-y-2 sm:space-y-0">
             <label
               htmlFor="coordinatorName"
@@ -125,12 +128,9 @@ export default function Page() {
                 },
                 minLength: {
                   value: 3,
-                  message: "Coordinator name must be at least 3 characters",
+                  message: "coordinater name must be atleast 3 characters ",
                 },
-                maxLength: {
-                  value: 20,
-                  message: "Coordinator name must be at most 20 characters",
-                },
+                maxLength: 20,
               })}
               id="coordinatorName"
               type="text"
@@ -193,23 +193,19 @@ export default function Page() {
             </label>
             <input
               id="password"
-              type="password"
               {...register("password", {
-                required: "Password is required",
+                required: true,
                 minLength: {
                   value: 6,
-                  message: "Password must be at least 6 characters",
+                  message: "password must be atleast 6 characters ",
                 },
-                maxLength: {
-                  value: 20,
-                  message: "Password must be at most 20 characters",
-                },
+                maxLength: 20,
               })}
+              type="password"
               className="w-full sm:flex-grow px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
               placeholder="Password"
             />
           </div>
-
           <div className="mb-4 text-red-500">
             <p>
               {errors.coordinatorName?.message ||
