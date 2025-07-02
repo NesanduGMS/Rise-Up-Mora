@@ -79,7 +79,7 @@ const AboutSection = () => {
 
               <div className="relative bg-white rounded-xl p-12 shadow-xl">
                 <span className="inline-block text-base uppercase tracking-widest font-semibold text-yellow-600 mb-5">
-                  IEEE Student Branch
+                  IEEE Student Branch Leadership
                 </span>
 
                 <h2 className="text-5xl md:text-6xl font-bold text-gray-800 mb-8">
