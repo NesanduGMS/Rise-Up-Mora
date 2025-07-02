@@ -406,12 +406,12 @@ const EnhancedContact = () => {
         {/* Call to Action */}
         <div className="mt-16 text-center">
           <div className="inline-block bg-gradient-to-r from-yellow-400 to-yellow-300 p-0.5 rounded-lg transform transition-transform hover:scale-105">
-            <button 
+            {/* <button 
               className="bg-white px-8 py-3 rounded-lg font-medium" 
               style={{ color: '#0a1c27' }}
             >
               Join IEEE Today
-            </button>
+            </button> */}
           </div>
         </div>
       </div>

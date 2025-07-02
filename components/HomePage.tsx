@@ -41,7 +41,7 @@ const HomePage = () => {
       <div ref={timelineRef}>
         <Timeline />
       </div>
-      <Partners />
+      {/* <Partners /> */}
       <div ref={galleryref}>
         <Gallery />
       </div>

@@ -104,7 +104,7 @@ const AboutSection = () => {
                   {[
                     { label: "Expert Webinars", value: "20+" },
                     { label: "Mock Interviews", value: "3500+" },
-                    { label: "Success Rate", value: "94%" },
+                    { label: "Companies", value: "50+" },
                   ].map((stat, idx) => (
                     <div
                       key={idx}
