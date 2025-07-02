@@ -260,7 +260,7 @@ const Partners = () => {
               animate={isInView ? { scale: 1, opacity: 1 } : {}}
               transition={{ duration: 0.5, delay: 0.3 }}
             >
-              Strategic Alliances
+              Alliances
             </motion.span>
             <motion.h2
               initial={{ opacity: 0, y: 10 }}

@@ -270,7 +270,7 @@ const EnhancedContact = () => {
       name: "Chanuka Anjana",
       image: "/contactUsImages/Chanuka.jpg",
       role: "Event Chairperson",
-      organization: "IEEE Student Branch of University Of Moratuwa",
+      organization: "IEEE Student Branch of University of Moratuwa",
       email: "chanukaanjana01@gmail.com",
       phone: "+94 71 760 7248",
       social: {
@@ -282,7 +282,7 @@ const EnhancedContact = () => {
       name: "Praveesha De Silva",
       image: "/contactUsImages/Praveesha.jpg",
       role: "Event Vice Chairperson",
-      organization: "IEEE Student Branch of University Of Moratuwa",
+      organization: "IEEE Student Branch of University of Moratuwa",
       email: "praveeshadesilva@gmail.com",
       phone: "+94 76 286 4219",
       social: {
@@ -294,7 +294,7 @@ const EnhancedContact = () => {
       name: "Gishan Bandara",
       image: "/contactUsImages/Gishan.jpg",
       role: "Event Vice Chairperson",
-      organization: "IEEE Student Branch of University Of Moratuwa",
+      organization: "IEEE Student Branch of University of Moratuwa",
       email: "gishanchamith77@gmail.com",
       phone: "+94 76 351 0388",
       social: {
@@ -358,7 +358,7 @@ const EnhancedContact = () => {
         {/* Chairpersons Section */}
         <div className="mb-8">
           <h3 className="text-2xl font-semibold text-center mb-8" style={{ color: '#0a1c27' }}>
-            <span className="inline-block border-b-2 border-yellow-400 pb-2">IEEE Branch Leadership</span>
+            <span className="inline-block border-b-2 border-yellow-400 pb-2">IEEE Student Branch</span>
           </h3>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 card-grid">

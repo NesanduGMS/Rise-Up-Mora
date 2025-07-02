@@ -76,7 +76,7 @@ const Footer = () => {
               <div className="p-2 rounded-full" style={{ backgroundColor: '#f1c232' }}>
                 <Zap size={28} className="text-slate-900" /> {/* Increased icon size */}
               </div>
-              <h2 className="text-3xl font-bold text-white">IEEE UoM</h2> {/* Increased font size */}
+              <h2 className="text-3xl font-bold text-white">IEEE Student Branch UoM</h2> {/* Increased font size */}
             </div>
             <p className="text-gray-100 text-lg leading-relaxed"> {/* Increased font size and changed color slightly */}
               The Institute of Electrical and Electronics Engineers (IEEE) Student Branch at University of Moratuwa is dedicated to fostering innovation and technological excellence.
