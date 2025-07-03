@@ -22,7 +22,7 @@ const Navbar = ({ sectionRefs }: NavbarProps) => {
   const [mounted, setMounted] = useState(false);
   const router = useRouter();
 
-  const navItems = useMemo(() => ['home', 'about', 'timeline', 'partners', 'gallery', 'contact'], []);
+  const navItems = useMemo(() => ['home', 'about', 'timeline', 'gallery', 'contact'], []);
 
   useEffect(() => {
     setMounted(true);

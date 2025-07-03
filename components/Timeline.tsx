@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { Calendar, Check } from 'lucide-react';
+import Image from 'next/image'; // Import the Next.js Image component
 
 interface TimelineEventProps {                                              
   date: string;
@@ -10,9 +11,13 @@ interface TimelineEventProps {
   index: number;
   isCompleted: boolean;
   isActive: boolean;
+  sponsor?: { // Make sponsor optional
+    name: string;
+    logo: string;
+  };
 }
 
-const TimelineEvent = ({ date, title, description, index, isCompleted, isActive }: TimelineEventProps) => {
+const TimelineEvent = ({ date, title, description, index, isCompleted, isActive, sponsor }: TimelineEventProps) => {
   const eventRef = useRef<HTMLDivElement>(null);
   const dotRef = useRef<HTMLDivElement>(null);
   const [showCheck, setShowCheck] = useState(isCompleted);
@@ -84,6 +89,18 @@ const TimelineEvent = ({ date, title, description, index, isCompleted, isActive 
         <div className="timeline-date">{date}</div>
         <h3 className="timeline-title">{title}</h3>
         <p className="timeline-description">{description}</p>
+        {sponsor && (
+          <div className="sponsor-container">
+            <Image 
+              src={sponsor.logo} 
+              alt={`${sponsor.name} logo`}
+              width={80} 
+              height={25}
+              className="sponsor-logo"
+            />
+            <span className="sponsor-name">{sponsor.name}</span>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -107,16 +124,20 @@ const Timeline = () => {
       description: "LinkedIn Profile Creation and Maintenance "
     },
     {
-      date: "July 17th, 2025",
+      date: "July 17th, 2025 ",
+      time: "10:30 AM - 12:30 PM",
+      title: "Workshop 02",
+      description: "Mastering in CV",
+      sponsor: {
+        name: "Conducted by GTN tech (Pvt) Ltd",
+        logo: "/gtn-logo.png" // Assumes the logo is in the `public` folder
+      }
+    },
+    {
+      date: "July 19th, 2025",
       time: "6:00 PM",
       title: "Registrations Opening",
       description: "Registration Opening for the University of Moratuwa Undergraduates"
-    },
-    {
-      date: "July 22nd, 2025 ",
-      time: "6:00 PM",
-      title: "Workshop 02",
-      description: "Excelling in CV Writing"
     },
     {
       date: "July 28th, 2025 ",
@@ -308,6 +329,7 @@ const Timeline = () => {
               index={index}
               isCompleted={isEventCompleted(index)}
               isActive={activeEventIndex === index}
+              sponsor={(event as any).sponsor} // Pass the sponsor prop
             />
           ))}
         </div>
@@ -633,6 +655,26 @@ const Timeline = () => {
           line-height: 1.6;
           color: rgba(255, 255, 255, 0.85);
           margin-bottom: 16px;
+        }
+
+        .sponsor-container {
+          margin-top: 16px;
+          padding-top: 16px;
+          border-top: 1px solid rgba(241, 194, 50, 0.15);
+          display: flex;
+          align-items: center;
+          gap: 12px;
+        }
+
+        .sponsor-logo {
+          object-fit: contain;
+          filter: brightness(0) invert(1); /* Makes the white logo visible on the dark card */
+        }
+
+        .sponsor-name {
+          font-size: 14px;
+          font-style: italic;
+          color: rgba(255, 255, 255, 0.7);
         }
         
         .animate-in {
