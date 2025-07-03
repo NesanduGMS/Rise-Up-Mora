@@ -47,7 +47,7 @@ const Footer = () => {
   ];
 
   const upcomingEvents = [
-    {icon: Calendar, title: 'Registrations Opening', date: 'July 17th, 2025 • 6:00 PM'}, // Updated date
+    {icon: Calendar, title: 'Registrations Opening', date: 'July 19th, 2025 • 6:00 PM'}, // Updated date
     {icon: Calendar, title: 'Registrations Closing', date: 'July 29th, 2025 • 5:00 PM'}, // Updated date
     {icon: Users, title: 'Internship & Mock Interview Fair', date: '31st July 2025 • 5:00 PM'} // Updated date & title
   ];

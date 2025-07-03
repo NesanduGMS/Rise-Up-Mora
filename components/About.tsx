@@ -124,28 +124,35 @@ const AboutSection = () => {
                 </div>
 
                 <div className="flex flex-wrap gap-6">
-                  <button 
+                    <button 
                     className={`group relative overflow-hidden px-10 py-5 bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-semibold rounded-xl flex items-center gap-3 transition-all duration-500 ${
                       animationTrigger ? "opacity-100" : "opacity-0"
                     }`}
                     style={{ transitionDelay: "900ms" }}
-                  >
+                    onClick={() => window.open("https://www.linkedin.com/company/rise-up-mora/", "_blank")}
+                    >
                     <span className="text-lg">Join Our Community</span>
                     <ArrowRight
                       size={20}
                       className="transition-transform duration-300 group-hover:translate-x-2"
                     />
                     <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -left-full group-hover:left-full transition-all duration-700 ease-in-out"></span>
-                  </button>
+                    </button>
 
-                  <button 
-                    className={`px-10 py-5 border-2 border-gray-200 hover:border-yellow-300 text-gray-700 font-medium rounded-xl transition-all duration-500 text-lg hover:bg-yellow-50 ${
+                    <button 
+                    className={`group relative overflow-hidden px-10 py-5 border-2 border-gray-200 hover:border-yellow-300 text-gray-700 font-medium rounded-xl flex items-center gap-3 transition-all duration-500 text-lg hover:bg-yellow-50 ${
                       animationTrigger ? "opacity-100" : "opacity-0"
                     }`}
                     style={{ transitionDelay: "1100ms" }}
-                  >
-                    Learn More
-                  </button>
+                    onClick={() => window.open("https://www.linkedin.com/search/results/all/?keywords=%23riseupmora2025&origin=HASH_TAG_FROM_FEED&sid=8s-", "_blank")}
+                    >
+                    <span>Learn More</span>
+                    <ArrowRight
+                      size={20}
+                      className="transition-transform duration-300 group-hover:translate-x-2"
+                    />
+                    <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-yellow-100 to-transparent -left-full group-hover:left-full transition-all duration-700 ease-in-out"></span>
+                    </button>
                 </div>
               </div>
 
