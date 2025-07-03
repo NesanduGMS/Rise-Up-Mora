@@ -144,15 +144,15 @@ const Gallery = () => {
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.5 + galleryImages.length * 0.1 }}
         >
-          <motion.button
+            <motion.button
             whileHover={{ scale: 1.05, boxShadow: "0 8px 20px -5px rgba(241, 194, 50, 0.4)"}} // #f1c232
             whileTap={{ scale: 0.98 }}
             className="inline-flex items-center gap-2.5 bg-yellow-500 hover:bg-yellow-600 text-[#112735] px-7 py-3.5 sm:px-8 sm:py-4 rounded-lg font-bold text-sm sm:text-base uppercase tracking-wider transition-all shadow-md hover:shadow-lg"
-            onClick={() => alert("View Full Album (Coming Soon!)")}
-          >
+            onClick={() => window.open("https://www.facebook.com/share/p/1AqSwfrQ3J/", "_blank")}
+            >
             <Camera size={20} />
             View Full Album
-          </motion.button>
+            </motion.button>
         </motion.div>
       </div>
     </section>
