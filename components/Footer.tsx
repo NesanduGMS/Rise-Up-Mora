@@ -139,12 +139,14 @@ const Footer = () => {
                   </div>
                 </div>
               ))}
+               {/* 
                <Link href="/events" passHref legacyBehavior>
-                <a className="inline-flex items-center text-amber-400 hover:text-amber-300 transition-colors group text-lg mt-1"> {/* Increased font size, added margin top */}
+                <a className="inline-flex items-center text-amber-400 hover:text-amber-300 transition-colors group text-lg mt-1">
                   View All Events
-                  <ArrowRight size={20} className="ml-2 transform transition-transform duration-300 group-hover:translate-x-1" /> {/* Increased icon size */}
+                  <ArrowRight size={20} className="ml-2 transform transition-transform duration-300 group-hover:translate-x-1" />
                 </a>
               </Link>
+               */}
             </div>
           </div>
         </div>
