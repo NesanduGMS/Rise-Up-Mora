@@ -8,6 +8,8 @@ interface SectionRefs {
   heroSectionRef: RefObject<HTMLDivElement>;
   aboutRef: RefObject<HTMLDivElement>;
   timelineRef: RefObject<HTMLDivElement>;
+  partnerRef: RefObject<HTMLDivElement>;
+  galleryRef: RefObject<HTMLDivElement>;
   contactUsRef: RefObject<HTMLDivElement>;
 }
 
@@ -22,7 +24,7 @@ const Navbar = ({ sectionRefs }: NavbarProps) => {
   const [mounted, setMounted] = useState(false);
   const router = useRouter();
 
-  const navItems = useMemo(() => ['home', 'about', 'timeline', 'gallery', 'contact'], []);
+  const navItems = useMemo(() => ['home', 'about', 'timeline', 'partner', 'gallery', 'contact'], []);
 
   useEffect(() => {
     setMounted(true);
@@ -87,6 +89,12 @@ const Navbar = ({ sectionRefs }: NavbarProps) => {
           break;
         case 'timeline':
           targetElement = sectionRefs.timelineRef.current;
+          break;
+        case 'partner':
+          targetElement = sectionRefs.partnerRef.current;
+          break;
+        case 'gallery':
+          targetElement = sectionRefs.galleryRef.current;
           break;
         case 'contact':
           targetElement = sectionRefs.contactUsRef.current;

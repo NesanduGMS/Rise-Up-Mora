@@ -16,12 +16,16 @@ const HomePage = () => {
   const heroSectionRef = useRef<HTMLDivElement>(null);
   const aboutRef = useRef<HTMLDivElement>(null);
   const timelineRef = useRef<HTMLDivElement>(null);
-  const galleryref = useRef<HTMLDivElement>(null);
+  const partnerRef = useRef<HTMLDivElement>(null); // 1. Add ref for Partners
+  const galleryRef = useRef<HTMLDivElement>(null);  // 2. Correct typo from galleryref to galleryRef
   const contactUsRef = useRef<HTMLDivElement>(null);
+
   const sectionRefs = {
     heroSectionRef,
     aboutRef,
     timelineRef,
+    partnerRef,   // 3. Pass partnerRef to the Navbar
+    galleryRef,   // 4. Pass galleryRef to the Navbar
     contactUsRef,
   };
   const { data: session, status } = useSession();
@@ -32,20 +36,25 @@ const HomePage = () => {
       <Navbar sectionRefs={sectionRefs} />
       <SideNavbar />
       <div className=" fixed bottom-0 bg-custom-yellow w-full z-40 h-4"></div>
-      <div ref={heroSectionRef}>
+      {/* Add `id` attributes for scroll-spy functionality */}
+      <div id="home" ref={heroSectionRef}>
         <HeroSection />
       </div>
-      <div ref={aboutRef}>
+      <div id="about" ref={aboutRef}>
         <About />
       </div>
-      <div ref={timelineRef}>
+      <div id="timeline" ref={timelineRef}>
         <Timeline />
       </div>
-      {/* <Partners /> */}
-      <div ref={galleryref}>
+      {/* 5. Wrap Partners component and assign the ref and id */}
+      <div id="partner" ref={partnerRef}>
+        <Partners />
+      </div>
+      {/* 6. Assign the corrected ref and id to Gallery */}
+      <div id="gallery" ref={galleryRef}>
         <Gallery />
       </div>
-      <div ref={contactUsRef}>
+      <div id="contact" ref={contactUsRef}>
         <CountactUs />
       </div>
       <Footer />
