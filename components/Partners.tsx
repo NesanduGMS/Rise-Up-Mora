@@ -189,28 +189,28 @@ const Partners = () => {
   const partners = [
     {
       name: '', // Name removed
-      type: 'Main Industrial Partner',
+      type: '',
       tier: 'main' as const,
-      logo: '/logos/mas-logo.png' 
+      logo: '/vital_hub-logo.png' 
     },
-    {
-      name: '', // Name removed
-      type: 'Technology Platform Partner',
-      tier: 'gold' as const,
-      logo: '/logos/ifs-logo.png'
-    },
+    // {
+    //   name: '', // Name removed
+    //   type: 'Technology Platform Partner',
+    //   tier: 'gold' as const,
+    //   logo: '/logos/ifs-logo.png'
+    // },
     {
       name: '', // Name removed
       type: 'Enterprise Solutions Partner',
       tier: 'silver' as const,
-      logo: '/logos/gtn-logo.png'
+      logo: '/gtn-logo.png'
     },
-    {
-      name: '', // Name removed
-      type: 'Innovation Partner',
-      tier: 'bronze' as const,
-      logo: '/logos/sensushub-logo.png'
-    }
+    // {
+    //   name: '', // Name removed
+    //   type: 'Innovation Partner',
+    //   tier: 'bronze' as const,
+    //   logo: '/logos/sensushub-logo.png'
+    // }
   ];
 
   const mainPartners = partners.filter(partner => partner.tier === 'main');
