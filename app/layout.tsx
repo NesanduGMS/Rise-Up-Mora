@@ -18,6 +18,31 @@ export const metadata: Metadata = {
   title: "Rise Up Mora",
   description:
     "Rise Up Mora is organized by IEEE Student branch of University of Moratuwa",
+  openGraph: {
+    title: "Rise Up Mora",
+    description: "Rise Up Mora is organized by IEEE Student branch of University of Moratuwa",
+    url: "https://riseupmora.lk", // Replace with your actual domain
+    siteName: "Rise Up Mora",
+    images: [
+      {
+        url: "/images/logo-large.png",
+        width: 1200,
+        height: 630,
+        alt: "Rise Up Mora Logo",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Rise Up Mora",
+    description: "Rise Up Mora is organized by IEEE Student branch of University of Moratuwa",
+    images: ["/images/logo-large.png"],
+  },
+  icons: {
+    icon: "/favicon.ico",
+  },
 };
 
 export default function RootLayout({
